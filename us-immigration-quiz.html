@@ -749,9 +749,14 @@ function renderQ(){
   const peekVariants = (lang==='ru') ? q.v : (q.ru ? q.ru.v : []);
   const peekFlag  = (lang==='ru') ? '🇺🇸' : '🇷🇺';
   const peekLabel = (lang==='ru') ? 'English' : 'Русский';
+  const curFlag   = (lang==='ru') ? '🇷🇺' : '🇺🇸';
+  const curLabel  = (lang==='ru') ? 'Русский' : 'English';
 
+  const peekExpl = (lang==='ru') ? q.e : (q.ru ? q.ru.e : '');
   const opts=shuffle([qCorrect,...qVariants]).slice(0,4);
   const letters=['A','B','C','D'];
+  const _all=[qCorrect,...qVariants], _pa=[peekCorrect,...peekVariants];
+  const peekOpts=opts.map(o=>{const pi=_all.indexOf(o);return pi>=0&&_pa[pi]?_pa[pi]:o;});
 
   let html=`<div class="q-chapter">${chName(q.ch)}</div>
     <div class="q-meta">
@@ -763,10 +768,6 @@ function renderQ(){
     </div>
     <div class="q-text">${qText}</div>
     <div class="translate-row"><button class="translate-btn" id="peek-btn">${peekFlag} ${peekLabel}</button></div>
-    <div class="q-peek" id="q-peek">
-      <div class="peek-q">${peekQ}</div>
-      <div class="peek-answers">${(()=>{const all=[qCorrect,...qVariants];const pa=[peekCorrect,...peekVariants];return opts.map((o,i)=>{const pi=all.indexOf(o);const pt=pi>=0&&pa[pi]?pa[pi]:'';return `<div class="peek-ans"><span class="peek-letter">${letters[i]}</span><span>${pt}</span></div>`;}).join('');})()}</div>
-    </div>
     <div class="answers">`;
   opts.forEach((o,i)=>{
     html+=`<button class="ans-btn" id="ab${i}"><span class="letter">${letters[i]}</span><span>${o}</span></button>`;
@@ -776,10 +777,21 @@ function renderQ(){
 
   document.getElementById('quiz-body').innerHTML=html;
 
+  let peeked = false;
+
+  // Helper: apply peek swap to feedback/explanation after it renders
+  function applyPeekToFeedback() {
+    const expl=document.querySelector('.explanation');
+    if(expl) expl.innerHTML=`<strong>${T[lang].whyAnswer}</strong> ${peekExpl}`;
+    const fbEm=document.querySelector('.feedback.fb-wrong em');
+    if(fbEm) fbEm.textContent=peekCorrect;
+  }
+
   // Attach answer handlers using translated values
   opts.forEach((opt,i)=>{
     document.getElementById('ab'+i).addEventListener('click',function(){
       handleAnswer(i, opt, qCorrect, qExpl, opts, q.n);
+      if(peeked) applyPeekToFeedback();
     });
   });
   document.getElementById('btn-next').addEventListener('click', nextQ);
@@ -806,11 +818,27 @@ function renderQ(){
     speechSynthesis.speak(u);
   });
 
-  // Attach peek/translate button
+  // Attach peek/translate button — swaps content in-place
   document.getElementById('peek-btn').addEventListener('click', function() {
-    const peek = document.getElementById('q-peek');
-    const isOpen = peek.classList.toggle('show');
-    this.classList.toggle('open', isOpen);
+    peeked = !peeked;
+    this.classList.toggle('open', peeked);
+    this.textContent = peeked ? `${curFlag} ${curLabel}` : `${peekFlag} ${peekLabel}`;
+    // Swap question text
+    document.querySelector('.q-text').textContent = peeked ? peekQ : qText;
+    // Swap answer button texts
+    opts.forEach((_,i)=>{
+      const sp=document.querySelector('#ab'+i+' span:last-child');
+      if(sp) sp.textContent = peeked ? peekOpts[i] : opts[i];
+    });
+    // Swap explanation + feedback if visible
+    if(peeked) {
+      applyPeekToFeedback();
+    } else {
+      const expl=document.querySelector('.explanation');
+      if(expl) expl.innerHTML=`<strong>${T[lang].whyAnswer}</strong> ${qExpl}`;
+      const fbEm=document.querySelector('.feedback.fb-wrong em');
+      if(fbEm) fbEm.textContent=qCorrect;
+    }
   });
 
   // Auto-speak if audio toggle is on

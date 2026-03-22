@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>U.S. Citizenship Test Prep — 128 Questions (2025)</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0d0d0d;--surface:#1a1a1a;--surface2:#242424;--border:#2e2e2e;
+  --accent:#c8102e;--accent2:#e63950;--gold:#d4a017;--text:#f0ede8;
+  --muted:#777;--success:#2d9e5f;--success-bg:#0e2d1e;--success-text:#5dd49a;
+  --error:#c8102e;--error-bg:#2d0e15;--error-text:#f08090;
+  --info-bg:#0e1d2d;--info:#3b82c4;
+  --radius:10px;--fh:'Bebas Neue',sans-serif;--fb:'DM Sans',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--fb);min-height:100vh}
+.screen{display:none;min-height:100vh}
+.screen.active{display:flex;flex-direction:column}
+
+/* ── HOME ── */
+#home{align-items:center;justify-content:center;padding:2rem 1.25rem}
+.hero{text-align:center;max-width:560px;width:100%}
+.flag-badge{display:inline-flex;gap:5px;align-items:center;background:var(--surface);border:1px solid var(--border);border-radius:99px;padding:6px 16px;margin-bottom:1.5rem}
+.fs{width:10px;height:10px;border-radius:2px}
+.fs.r{background:#c8102e}.fs.w{background:#f0ede8}.fs.b{background:#002868}
+.badge-text{font-size:.72rem;color:var(--muted);margin-left:6px}
+h1{font-family:var(--fh);font-size:clamp(2.8rem,10vw,5rem);letter-spacing:2px;line-height:.92;margin-bottom:.5rem}
+h1 span{color:var(--accent)}
+.hero>p{color:var(--muted);font-size:.95rem;margin-bottom:1.25rem;line-height:1.6}
+.alert-box{background:#1e1500;border:1px solid var(--gold);border-radius:var(--radius);padding:.7rem 1rem;margin-bottom:1.25rem;text-align:left}
+.alert-box strong{color:var(--gold);font-size:.74rem;display:block;margin-bottom:2px}
+.alert-box p{color:#c8a855;font-size:.74rem;line-height:1.45}
+
+/* stats bar */
+.stats-bar{display:none;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.75rem 1rem;margin-bottom:1.25rem;text-align:left}
+.stats-bar.show{display:flex;align-items:center;gap:1rem;flex-wrap:wrap}
+.stat-item{display:flex;flex-direction:column;align-items:center;gap:2px}
+.stat-num{font-family:var(--fh);font-size:1.5rem;line-height:1}
+.stat-lbl{font-size:.65rem;color:var(--muted)}
+.stat-item.red .stat-num{color:var(--error-text)}
+.stat-item.grn .stat-num{color:var(--success-text)}
+.stat-item.gld .stat-num{color:var(--gold)}
+.stats-bar .divider{width:1px;height:36px;background:var(--border)}
+.btn-reset{margin-left:auto;background:none;border:1px solid var(--border);border-radius:6px;color:var(--muted);font-size:.72rem;font-family:var(--fb);padding:5px 10px;cursor:pointer}
+.btn-reset:hover{color:var(--text);border-color:var(--muted)}
+
+.mode-cards{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:1rem}
+.mode-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem;cursor:pointer;transition:all .18s;text-align:left}
+.mode-card:hover{border-color:var(--accent);background:var(--surface2)}
+.mode-card.selected{border-color:var(--accent);background:#2d0e15}
+.mode-card.disabled{opacity:.4;cursor:default;pointer-events:none}
+.mode-icon{font-size:1.3rem;margin-bottom:.35rem}
+.mode-card h3{font-size:.86rem;font-weight:600;margin-bottom:2px}
+.mode-card p{font-size:.72rem;color:var(--muted);line-height:1.35}
+.missed-count{display:inline-block;background:var(--error-bg);border:1px solid var(--error);color:var(--error-text);border-radius:99px;font-size:.65rem;font-weight:600;padding:1px 8px;margin-left:6px;vertical-align:middle}
+
+.chapters-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:7px;margin-bottom:1.1rem;max-height:230px;overflow-y:auto}
+.ch-btn{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:.6rem .6rem;cursor:pointer;font-size:.71rem;font-family:var(--fb);color:var(--muted);text-align:left;transition:all .18s;line-height:1.3}
+.ch-btn:hover{border-color:var(--accent);color:var(--text)}
+.ch-btn.selected{border-color:var(--accent);background:#2d0e15;color:var(--text)}
+.ch-id{display:block;font-size:.6rem;color:var(--accent);font-weight:600;margin-bottom:2px}
+
+/* audio toggle */
+.audio-row{display:flex;align-items:center;gap:.75rem;margin-bottom:1.1rem;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.65rem 1rem}
+.audio-row label{font-size:.82rem;color:var(--text);cursor:pointer;flex:1}
+.audio-row span{font-size:.72rem;color:var(--muted)}
+.toggle{position:relative;width:36px;height:20px;flex-shrink:0}
+.toggle input{opacity:0;width:0;height:0}
+.slider{position:absolute;inset:0;background:var(--border);border-radius:20px;transition:.2s;cursor:pointer}
+.slider:before{content:'';position:absolute;width:14px;height:14px;left:3px;bottom:3px;background:#666;border-radius:50%;transition:.2s}
+input:checked+.slider{background:var(--accent)}
+input:checked+.slider:before{transform:translateX(16px);background:#fff}
+
+.btn-start{width:100%;padding:.95rem;background:var(--accent);border:none;border-radius:var(--radius);color:#fff;font-family:var(--fh);font-size:1.3rem;letter-spacing:2px;cursor:pointer;transition:background .2s;margin-top:.25rem}
+.btn-start:hover{background:var(--accent2)}
+.btn-start:disabled{background:#333;color:#555;cursor:default}
+
+/* ── QUIZ ── */
+#quiz{padding:0}
+.quiz-top{background:var(--surface);border-bottom:1px solid var(--border);padding:.8rem 1.3rem;display:flex;align-items:center;gap:.8rem}
+.back-btn{background:none;border:1px solid var(--border);color:var(--muted);border-radius:6px;padding:5px 11px;font-size:.76rem;cursor:pointer;font-family:var(--fb);white-space:nowrap}
+.back-btn:hover{color:var(--text);border-color:var(--muted)}
+.progress-wrap{flex:1;min-width:0}
+.progress-labels{display:flex;justify-content:space-between;font-size:.68rem;color:var(--muted);margin-bottom:4px}
+.progress-bar{height:5px;background:var(--border);border-radius:99px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--gold));border-radius:99px;transition:width .35s ease}
+.score-chip{background:var(--surface2);border:1px solid var(--border);border-radius:99px;padding:3px 10px;font-size:.73rem;white-space:nowrap}
+.sc{color:var(--success-text);font-weight:600}
+.se{color:var(--error-text);font-weight:600}
+
+/* interview sim bar */
+.sim-bar{background:#1a1000;border-bottom:1px solid #3a2a00;padding:.5rem 1.3rem;font-size:.76rem;color:#c8a855;display:flex;align-items:center;gap:1rem}
+.sim-bar span{color:var(--muted)}
+.sim-need{color:var(--gold);font-weight:600}
+
+.quiz-body{flex:1;padding:1.6rem 1.3rem;max-width:680px;margin:0 auto;width:100%}
+.q-chapter{font-size:.66rem;font-weight:600;letter-spacing:1.5px;color:var(--accent);text-transform:uppercase;margin-bottom:.55rem}
+.q-meta{display:flex;align-items:center;gap:.75rem;margin-bottom:.35rem}
+.q-num{font-size:.73rem;color:var(--muted)}
+.audio-btn{background:none;border:1px solid var(--border);border-radius:6px;padding:3px 8px;font-size:.72rem;color:var(--muted);cursor:pointer;font-family:var(--fb);display:flex;align-items:center;gap:4px;transition:all .15s}
+.audio-btn:hover{border-color:var(--info);color:var(--info)}
+.audio-btn.playing{border-color:var(--info);color:var(--info);background:var(--info-bg)}
+.audio-btn svg{width:12px;height:12px;flex-shrink:0}
+.q-text{font-size:clamp(.98rem,2.7vw,1.12rem);font-weight:500;line-height:1.55;margin-bottom:.6rem}
+.translate-row{display:flex;align-items:center;margin-bottom:1rem}
+.translate-btn{background:none;border:1px solid var(--border);border-radius:6px;padding:3px 10px;font-size:.68rem;color:var(--muted);cursor:pointer;font-family:var(--fb);transition:all .15s;display:inline-flex;align-items:center;gap:4px}
+.translate-btn:hover{border-color:var(--accent);color:var(--text)}
+.translate-btn.open{border-color:var(--accent);color:var(--accent);background:rgba(200,16,46,.08)}
+.q-peek{display:none;margin-bottom:.8rem;padding:.7rem .9rem;background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:var(--radius);font-size:.82rem;line-height:1.5;color:var(--muted)}
+.q-peek.show{display:block}
+.peek-q{font-style:italic;margin-bottom:.6rem;font-size:.84rem;color:var(--text)}
+.peek-answers{display:flex;flex-direction:column;gap:5px}
+.peek-ans{display:flex;gap:8px;align-items:flex-start;line-height:1.4}
+.peek-letter{min-width:18px;height:18px;border-radius:50%;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:.6rem;font-weight:600;flex-shrink:0;margin-top:1px;color:var(--muted)}
+.answers{display:flex;flex-direction:column;gap:8px}
+.ans-btn{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.85rem .95rem;cursor:pointer;font-family:var(--fb);font-size:.86rem;color:var(--text);text-align:left;transition:border-color .15s,background .15s;display:flex;align-items:flex-start;gap:10px;line-height:1.45;width:100%}
+.ans-btn:hover:not(:disabled){border-color:var(--accent);background:var(--surface2)}
+.ans-btn:disabled{cursor:default}
+.letter{min-width:23px;height:23px;border-radius:50%;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:.68rem;font-weight:600;flex-shrink:0;margin-top:1px;color:var(--muted)}
+.ans-btn.state-correct{border-color:var(--success);background:var(--success-bg)}
+.ans-btn.state-correct .letter{background:var(--success);border-color:var(--success);color:#fff}
+.ans-btn.state-wrong{border-color:var(--error);background:var(--error-bg)}
+.ans-btn.state-wrong .letter{background:var(--error);border-color:var(--error);color:#fff}
+.ans-btn.state-reveal{border-color:var(--success);background:var(--success-bg)}
+.ans-btn.state-reveal .letter{background:var(--success);border-color:var(--success);color:#fff}
+
+/* feedback + explanation */
+.feedback-wrap{margin-top:1rem;display:flex;flex-direction:column;gap:8px}
+.feedback{padding:.85rem .95rem;border-radius:var(--radius);font-size:.83rem;line-height:1.5}
+.fb-correct{background:var(--success-bg);border:1px solid var(--success);color:var(--success-text)}
+.fb-wrong{background:var(--error-bg);border:1px solid var(--error);color:var(--error-text)}
+.feedback strong{display:block;margin-bottom:2px;font-size:.86rem}
+.explanation{background:var(--info-bg);border:1px solid #1e3a58;border-radius:var(--radius);padding:.85rem .95rem;font-size:.82rem;line-height:1.6;color:#a8c8e8}
+.explanation strong{display:block;font-size:.72rem;letter-spacing:.8px;color:var(--info);text-transform:uppercase;margin-bottom:.3rem;font-weight:600}
+
+.quiz-nav{display:flex;justify-content:flex-end;margin-top:1.3rem}
+.btn-next{background:var(--accent);border:none;border-radius:var(--radius);color:#fff;font-family:var(--fh);font-size:1rem;letter-spacing:1px;padding:.65rem 1.6rem;cursor:pointer;transition:background .2s}
+.btn-next:hover{background:var(--accent2)}
+.btn-next:disabled{background:#2a2a2a;color:#555;cursor:default}
+
+/* ── RESULTS ── */
+#results{align-items:center;justify-content:center;padding:2rem 1.25rem}
+.results-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:2rem 1.6rem;max-width:440px;width:100%;text-align:center}
+.results-ring{width:108px;height:108px;margin:0 auto 1.2rem;position:relative}
+.results-ring svg{width:100%;height:100%}
+.ring-inner{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.ring-pct{font-family:var(--fh);font-size:1.85rem;line-height:1}
+.ring-lbl{font-size:.6rem;color:var(--muted)}
+.results-card h2{font-family:var(--fh);font-size:1.85rem;letter-spacing:1px;margin-bottom:.4rem}
+.res-sub{color:var(--muted);font-size:.83rem;margin-bottom:1.25rem;line-height:1.5}
+/* pass/fail verdict */
+.verdict{border-radius:var(--radius);padding:.75rem 1rem;margin-bottom:1.1rem;font-size:.85rem;font-weight:500}
+.verdict.pass{background:var(--success-bg);border:1px solid var(--success);color:var(--success-text)}
+.verdict.fail{background:var(--error-bg);border:1px solid var(--error);color:var(--error-text)}
+.stats-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:1.25rem}
+.stat{background:var(--surface2);border-radius:8px;padding:.65rem .5rem}
+.stat .sv{font-family:var(--fh);font-size:1.35rem;margin-bottom:2px}
+.stat .sl{font-size:.64rem;color:var(--muted)}
+.results-btns{display:flex;flex-direction:column;gap:8px}
+.btn-outline{background:none;border:1px solid var(--border);color:var(--text);border-radius:var(--radius);padding:.65rem;font-family:var(--fb);font-size:.86rem;cursor:pointer;transition:border-color .18s}
+.btn-outline:hover{border-color:var(--muted)}
+
+/* ── LANG TOGGLE ── */
+.lang-bar{display:flex;justify-content:flex-end;margin-bottom:1rem}
+.lang-toggle{display:flex;background:var(--surface);border:1px solid var(--border);border-radius:99px;padding:3px;gap:3px}
+.lang-btn{background:none;border:none;border-radius:99px;padding:5px 14px;font-size:.78rem;font-family:var(--fb);color:var(--muted);cursor:pointer;transition:all .18s;white-space:nowrap}
+.lang-btn.active{background:var(--accent);color:#fff}
+.lang-btn:hover:not(.active){color:var(--text)}
+
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:var(--surface)}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:99px}
+@media(max-width:480px){
+  .mode-cards{grid-template-columns:1fr}
+  .quiz-top{padding:.6rem .9rem;gap:.5rem}
+  .quiz-body{padding:1.2rem .9rem}
+}
+</style>
+</head>
+<body>
+
+<!-- ══ HOME ══ -->
+<div id="home" class="screen active">
+<div class="hero">
+  <div class="lang-bar">
+    <div class="lang-toggle">
+      <button class="lang-btn active" id="lang-en" onclick="setLang('en')">🇺🇸 English</button>
+      <button class="lang-btn" id="lang-ru" onclick="setLang('ru')">🇷🇺 Русский</button>
+    </div>
+  </div>
+  <div class="flag-badge">
+    <div class="fs r"></div><div class="fs w"></div><div class="fs b"></div><div class="fs r"></div><div class="fs w"></div>
+    <span class="badge-text" id="badge-text">2025 USCIS · 128 Official Questions</span>
+  </div>
+  <h1>U.S. <span>CITIZENSHIP</span><br><span id="title-word">TEST PREP</span></h1>
+  <p id="hero-sub">Master all 128 civics questions. Pass 12 of 20 to become a citizen.</p>
+
+  <div class="alert-box">
+    <strong id="alert-title">⚡ 2025 TEST UPDATE</strong>
+    <p id="alert-body">For N-400 filed Oct 20, 2025+: 128 questions, officer asks 20, you need 12 correct to pass.</p>
+  </div>
+
+  <!-- Progress stats (shown when localStorage has data) -->
+  <div class="stats-bar" id="stats-bar">
+    <div class="stat-item gld"><span class="stat-num" id="st-total">0</span><span class="stat-lbl" id="lbl-answered">Answered</span></div>
+    <div class="divider"></div>
+    <div class="stat-item grn"><span class="stat-num" id="st-correct">0</span><span class="stat-lbl" id="lbl-correct">Correct</span></div>
+    <div class="divider"></div>
+    <div class="stat-item red"><span class="stat-num" id="st-missed">0</span><span class="stat-lbl" id="lbl-missed">Missed</span></div>
+    <button class="btn-reset" id="btn-reset" onclick="resetProgress()">Reset</button>
+  </div>
+
+  <!-- Mode cards -->
+  <div class="mode-cards">
+    <div class="mode-card selected" id="mode-all" onclick="selectMode('all')">
+      <div class="mode-icon">🇺🇸</div>
+      <h3 id="mc-all-title">Full Practice Test</h3>
+      <p id="mc-all-desc">20 random questions — simulates the real interview</p>
+    </div>
+    <div class="mode-card" id="mode-sim" onclick="selectMode('sim')">
+      <div class="mode-icon">🎯</div>
+      <h3 id="mc-sim-title">Real Interview Sim</h3>
+      <p id="mc-sim-desc">Stops at 12 correct or 9 wrong — exactly like USCIS</p>
+    </div>
+    <div class="mode-card" id="mode-missed" onclick="selectMode('missed')">
+      <div class="mode-icon">🔁</div>
+      <h3 id="mc-missed-title">My Weak Spots<span class="missed-count" id="missed-badge">0</span></h3>
+      <p id="mc-missed-desc">Practice only questions you've answered wrong</p>
+    </div>
+    <div class="mode-card" id="mode-chapter" onclick="selectMode('chapter')">
+      <div class="mode-icon">📚</div>
+      <h3 id="mc-ch-title">By Chapter</h3>
+      <p id="mc-ch-desc">Focus on one topic area at a time</p>
+    </div>
+  </div>
+
+  <div id="chapter-select" style="display:none">
+    <div class="chapters-grid" id="chapters-grid"></div>
+  </div>
+
+  <!-- Audio toggle -->
+  <div class="audio-row">
+    <label for="audio-toggle" id="audio-label">🔊 Read questions aloud (oral practice)</label>
+    <span id="audio-hint">Browser voices</span>
+    <label class="toggle">
+      <input type="checkbox" id="audio-toggle">
+      <span class="slider"></span>
+    </label>
+  </div>
+
+  <button class="btn-start" id="btn-start" onclick="startQuiz()">START PRACTICE →</button>
+</div>
+</div>
+
+<!-- ══ QUIZ ══ -->
+<div id="quiz" class="screen">
+  <div class="quiz-top">
+    <button class="back-btn" id="back-btn" onclick="goHome()">← Menu</button>
+    <div class="progress-wrap">
+      <div class="progress-labels"><span id="prog-label">Question 1 of 20</span><span id="prog-pct">0%</span></div>
+      <div class="progress-bar"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+    </div>
+    <div class="score-chip"><span class="sc" id="sc-c">0</span>/<span class="se" id="sc-w">0</span></div>
+    <div class="lang-toggle" style="flex-shrink:0">
+      <button class="lang-btn active" id="qlang-en" onclick="setLang('en')" style="padding:4px 10px;font-size:.7rem">EN</button>
+      <button class="lang-btn" id="qlang-ru" onclick="setLang('ru')" style="padding:4px 10px;font-size:.7rem">RU</button>
+    </div>
+  </div>
+  <div id="sim-bar-wrap"></div>
+  <div class="quiz-body" id="quiz-body"></div>
+</div>
+
+<!-- ══ RESULTS ══ -->
+<div id="results" class="screen">
+  <div class="results-card">
+    <div class="results-ring">
+      <svg viewBox="0 0 110 110">
+        <circle cx="55" cy="55" r="48" fill="none" stroke="#2e2e2e" stroke-width="9"/>
+        <circle id="ring-arc" cx="55" cy="55" r="48" fill="none" stroke="#c8102e" stroke-width="9"
+          stroke-dasharray="301.6" stroke-dashoffset="301.6" stroke-linecap="round" transform="rotate(-90 55 55)"/>
+      </svg>
+      <div class="ring-inner"><span class="ring-pct" id="res-pct">0%</span><span class="ring-lbl">score</span></div>
+    </div>
+    <h2 id="res-title">RESULTS</h2>
+    <p class="res-sub" id="res-sub"></p>
+    <div id="verdict-box"></div>
+    <div class="stats-row">
+      <div class="stat"><div class="sv" id="res-total">0</div><div class="sl" id="res-lbl-total">Total</div></div>
+      <div class="stat"><div class="sv" id="res-correct" style="color:var(--success-text)">0</div><div class="sl" id="res-lbl-correct">Correct</div></div>
+      <div class="stat"><div class="sv" id="res-wrong" style="color:var(--error-text)">0</div><div class="sl" id="res-lbl-wrong">Wrong</div></div>
+    </div>
+    <div class="results-btns">
+      <button class="btn-start" id="res-retry" onclick="retryQuiz()">TRY AGAIN</button>
+      <button class="btn-outline" id="res-back" onclick="goHome()">Back to Menu</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════
+// DATA
+// ══════════════════════════════════════════
+const CHAPTERS = [
+  {id:'A',title:'Principles of American Government'},
+  {id:'B',title:'System of Government'},
+  {id:'C',title:'Rights & Responsibilities'},
+  {id:'D',title:'Colonial Period & Independence'},
+  {id:'E',title:'The 1800s'},
+  {id:'F',title:'1900s & Modern History'},
+  {id:'G',title:'Symbols'},
+  {id:'H',title:'Holidays'},
+];
+
+// Each question: n=official#, ch=chapter, q=question, c=correct, v=wrong variants[], e=explanation
+const QS = [
+{n:1,ch:'A',q:"What is the form of government of the United States?",c:"Constitutional federal republic",v:["Direct democracy","Parliamentary monarchy","Confederation of sovereign states"],e:"The U.S. is a republic where citizens elect representatives to govern on their behalf, operating under a written Constitution that divides power between federal and state governments.",ru:{q:"Какова форма правления в США?",c:"Конституционная федеральная республика",v:["Прямая демократия","Парламентская монархия","Конфедерация суверенных штатов"],e:"США — республика, где граждане избирают представителей для управления страной. Власть разделена между федеральным правительством и правительствами штатов согласно Конституции."}},
+{n:2,ch:'A',q:"What is the supreme law of the land?",c:"The Constitution",v:["The Bill of Rights","Federal law passed by Congress","Presidential executive orders"],e:"The U.S. Constitution, ratified in 1788, is the highest law in the country. All other laws — federal, state, and local — must be consistent with it.",ru:{q:"Что является высшим законом страны?",c:"Конституция",v:["Билль о правах","Федеральный закон, принятый Конгрессом","Президентские указы"],e:"Конституция США, ратифицированная в 1788 году, — высший закон страны. Все прочие законы — федеральные, штатные и местные — должны ей соответствовать."}},
+{n:3,ch:'A',q:"Name one thing the U.S. Constitution does.",c:"Defines the powers of the government",v:["Declares independence from Britain","Sets the federal tax rates","Establishes the national church"],e:"The Constitution does three main things: it sets up the government, defines what each branch can do, and protects the basic rights of Americans.",ru:{q:"Назовите одно из того, что делает Конституция США.",c:"Определяет полномочия правительства",v:["Провозглашает независимость от Великобритании","Устанавливает федеральные налоговые ставки","Учреждает государственную церковь"],e:"Конституция выполняет три функции: устанавливает структуру правительства, определяет полномочия каждой ветви власти и защищает основные права американцев."}},
+{n:4,ch:'A',q:'The U.S. Constitution starts with "We the People." What does this mean?',c:"Self-government / popular sovereignty",v:["Only wealthy landowners govern","The federal government has unlimited power","Citizens must obey all government orders"],e:'"We the People" establishes popular sovereignty — the idea that the government\'s authority comes from the people, not from a king or ruling class.',ru:{q:"Конституция США начинается словами «Мы, народ». Что это означает?",c:"Самоуправление / народный суверенитет",v:["Только богатые землевладельцы управляют страной","Федеральное правительство имеет неограниченную власть","Граждане обязаны исполнять все распоряжения правительства"],e:"«Мы, народ» закрепляет принцип народного суверенитета — власть правительства исходит от народа, а не от короля или правящего класса."}},
+{n:5,ch:'A',q:"How are changes made to the U.S. Constitution?",c:"Through the amendment process",v:["By presidential decree","By a majority vote in the Supreme Court","By a national referendum"],e:"An amendment requires a two-thirds vote in both houses of Congress and ratification by three-fourths of states. This high bar makes the Constitution stable but adaptable.",ru:{q:"Как вносятся изменения в Конституцию США?",c:"Через процедуру принятия поправок",v:["Президентским указом","Большинством голосов в Верховном суде","Через общенациональный референдум"],e:"Для принятия поправки нужно голосование двух третей обеих палат Конгресса и ратификация тремя четвертями штатов. Это обеспечивает стабильность и гибкость Конституции."}},
+{n:6,ch:'A',q:"What does the Bill of Rights protect?",c:"The basic rights of Americans",v:["The rights of foreign governments","The salaries of elected officials","The powers of the military"],e:"The Bill of Rights — the first 10 amendments — was ratified in 1791. It protects freedoms like speech, religion, and the press, and limits government power over individuals.",ru:{q:"Что защищает Билль о правах?",c:"Основные права американцев",v:["Права иностранных правительств","Жалованье избранных чиновников","Полномочия вооружённых сил"],e:"Билль о правах — первые 10 поправок, ратифицированные в 1791 году. Он защищает свободу слова, вероисповедания и печати, ограничивая власть правительства над гражданами."}},
+{n:7,ch:'A',q:"How many amendments does the U.S. Constitution have?",c:"Twenty-seven (27)",v:["Ten (10)","Twenty-one (21)","Thirty-three (33)"],e:"There are 27 amendments. The first 10 (the Bill of Rights) were added in 1791. The most recent, the 27th Amendment dealing with congressional pay, was ratified in 1992.",ru:{q:"Сколько поправок насчитывает Конституция США?",c:"Двадцать семь (27)",v:["Десять (10)","Двадцать одна (21)","Тридцать три (33)"],e:"Существует 27 поправок. Первые 10 (Билль о правах) приняты в 1791 году. Последняя, 27-я поправка о жаловании членов Конгресса, ратифицирована в 1992 году."}},
+{n:8,ch:'A',q:"Why is the Declaration of Independence important?",c:"It says America is free from British control and all people are created equal",v:["It created the three branches of government","It established the Bill of Rights","It ended the Civil War"],e:"Adopted on July 4, 1776, the Declaration announced independence from Britain and proclaimed that 'all men are created equal' with rights to life, liberty, and the pursuit of happiness.",ru:{q:"Почему важна Декларация независимости?",c:"Она провозглашает свободу Америки от Великобритании и равенство всех людей",v:["Она создала три ветви власти","Она учредила Билль о правах","Она положила конец Гражданской войне"],e:"Принятая 4 июля 1776 года, Декларация провозгласила независимость от Великобритании и заявила, что все люди созданы равными и наделены правами на жизнь, свободу и стремление к счастью."}},
+{n:9,ch:'A',q:"What founding document said the American colonies were free from Britain?",c:"The Declaration of Independence",v:["The U.S. Constitution","The Articles of Confederation","The Federalist Papers"],e:"Thomas Jefferson wrote the Declaration of Independence in 1776. It officially broke the colonies' ties to Britain and explained the philosophical basis for self-governance.",ru:{q:"Какой документ провозгласил свободу американских колоний от Великобритании?",c:"Декларация независимости",v:["Конституция США","Статьи Конфедерации","Документы федералиста"],e:"Томас Джефферсон написал Декларацию независимости в 1776 году. Она разорвала связи колоний с Великобританией и обосновала принцип самоуправления."}},
+{n:10,ch:'A',q:"Name two important ideas from the Declaration of Independence and the U.S. Constitution.",c:"Equality and liberty",v:["Taxation and representation","Military power and diplomacy","Free trade and open borders"],e:"Both documents emphasize that all people are equal and free. Liberty — the right to live without arbitrary government control — and equality before the law are cornerstones of American democracy.",ru:{q:"Назовите две важные идеи из Декларации независимости и Конституции США.",c:"Равенство и свобода",v:["Налогообложение и представительство","Военная мощь и дипломатия","Свободная торговля и открытые границы"],e:"Оба документа подчёркивают равенство и свободу людей. Свобода от произвола власти и равенство перед законом — краеугольные камни американской демократии."}},
+{n:11,ch:'A',q:'The words "Life, Liberty, and the pursuit of Happiness" are in what document?',c:"The Declaration of Independence",v:["The U.S. Constitution","The Bill of Rights","The Emancipation Proclamation"],e:"These words appear in the Declaration of Independence (1776). They were written by Thomas Jefferson and describe the natural rights that governments are formed to protect.",ru:{q:"В каком документе содержатся слова «Жизнь, Свобода и стремление к Счастью»?",c:"В Декларации независимости",v:["В Конституции США","В Билле о правах","В Прокламации об освобождении"],e:"Эти слова из Декларации независимости (1776). Написаны Томасом Джефферсоном — они описывают естественные права, для защиты которых создаются правительства."}},
+{n:12,ch:'A',q:"What is the economic system of the United States?",c:"Capitalism / free market economy",v:["Socialism","Command economy","Mixed planned economy"],e:"The U.S. has a market economy where businesses and individuals make most economic decisions. Private ownership, free competition, and profit motivation are central features.",ru:{q:"Какова экономическая система США?",c:"Капитализм / рыночная экономика",v:["Социализм","Командная экономика","Смешанная плановая экономика"],e:"В США рыночная экономика, где большинство решений принимают предприятия и частные лица. Частная собственность, свободная конкуренция и мотивация прибылью — её главные черты."}},
+{n:13,ch:'A',q:'What is the "rule of law"?',c:"Everyone must follow the law — no one is above the law",v:["Only citizens are required to obey the law","The president may override any law","Congress sets the rules and everyone else follows"],e:"The rule of law means that the same laws apply to everyone — including elected officials and the government itself. No person or institution has authority above the law.",ru:{q:"Что такое «верховенство закона»?",c:"Все должны соблюдать закон — никто не стоит выше закона",v:["Только граждане обязаны соблюдать закон","Президент может отменить любой закон","Конгресс устанавливает правила, а все остальные им следуют"],e:"Верховенство закона означает, что одни законы применяются ко всем — включая чиновников и само правительство. Ни одно лицо или учреждение не стоит выше закона."}},
+{n:14,ch:'A',q:"Many documents influenced the U.S. Constitution. Name one.",c:"The Federalist Papers",v:["The Magna Carta","The Articles of War","The Monroe Doctrine"],e:"The Federalist Papers (1787–88), the Mayflower Compact, the Articles of Confederation, and the Virginia Declaration of Rights all shaped the Constitution's structure and principles.",ru:{q:"Многие документы повлияли на Конституцию США. Назовите один.",c:"Документы федералиста",v:["Великая хартия вольностей","Военный кодекс","Доктрина Монро"],e:"Документы федералиста (1787–88), Мэйфлауэрское соглашение, Статьи Конфедерации и Виргинская декларация прав — все они повлияли на структуру и принципы Конституции."}},
+{n:15,ch:'A',q:"There are three branches of government. Why?",c:"So no one part of government becomes too powerful — checks and balances",v:["To create more government jobs","To make laws faster","To give each political party equal power"],e:"Separation of powers divides authority among the legislative (makes laws), executive (enforces laws), and judicial (interprets laws) branches. Each branch can limit the others through checks and balances.",ru:{q:"Существуют три ветви власти. Почему?",c:"Чтобы ни одна часть правительства не стала слишком могущественной — система сдержек и противовесов",v:["Чтобы создать больше государственных должностей","Чтобы принимать законы быстрее","Чтобы дать каждой партии равную власть"],e:"Разделение властей делит полномочия между законодательной, исполнительной и судебной ветвями. Каждая ветвь сдерживает другие — это система сдержек и противовесов."}},
+{n:16,ch:'B',q:"Name the three branches of government.",c:"Legislative, Executive, and Judicial",v:["Senate, House, and President","Federal, State, and Local","Military, Civilian, and Judicial"],e:"The Legislative Branch (Congress) makes laws. The Executive Branch (President) enforces them. The Judicial Branch (courts) interprets them. This division prevents any one branch from holding too much power.",ru:{q:"Назовите три ветви власти.",c:"Законодательная, Исполнительная и Судебная",v:["Сенат, Палата представителей и Президент","Федеральная, Штатная и Местная","Военная, Гражданская и Судебная"],e:"Законодательная (Конгресс) принимает законы. Исполнительная (Президент) их исполняет. Судебная (суды) их толкует. Такое разделение не допускает концентрации власти в одних руках."}},
+{n:17,ch:'B',q:"The President of the United States is in charge of which branch?",c:"The Executive branch",v:["The Legislative branch","The Judicial branch","The Military branch"],e:"The President leads the Executive Branch, which also includes the Vice President, Cabinet, and federal agencies. It is responsible for carrying out and enforcing federal laws.",ru:{q:"Президент США является главой какой ветви власти?",c:"Исполнительной ветви",v:["Законодательной ветви","Судебной ветви","Военной ветви"],e:"Президент возглавляет Исполнительную ветвь, в которую также входят Вице-президент, Кабинет и федеральные ведомства. Она отвечает за исполнение федеральных законов."}},
+{n:18,ch:'B',q:"What part of the federal government writes laws?",c:"Congress / the Legislative branch",v:["The President","The Supreme Court","The Cabinet"],e:"Congress — made up of the Senate and House of Representatives — is the only body that can pass federal legislation. The President can propose but not write laws.",ru:{q:"Какая часть федерального правительства создаёт законы?",c:"Конгресс / Законодательная ветвь",v:["Президент","Верховный суд","Кабинет"],e:"Конгресс — единственный орган, который может принимать федеральные законы. Президент может предлагать законы, но не принимать их."}},
+{n:19,ch:'B',q:"What are the two parts of the U.S. Congress?",c:"The Senate and the House of Representatives",v:["The House and the Cabinet","The Senate and the Supreme Court","The Legislature and the Executive"],e:"Congress is bicameral. The Senate has 100 members (2 per state). The House of Representatives has 435 members allocated by state population.",ru:{q:"Из каких двух частей состоит Конгресс США?",c:"Сенат и Палата представителей",v:["Палата представителей и Кабинет","Сенат и Верховный суд","Законодательный и Исполнительный органы"],e:"Конгресс — двухпалатный. В Сенате 100 членов (2 от каждого штата). В Палате представителей 435 членов, распределённых пропорционально населению штатов."}},
+{n:20,ch:'B',q:"Name one power of the U.S. Congress.",c:"Declares war",v:["Appoints Supreme Court justices","Enforces federal laws","Commands the military directly"],e:"Congress has exclusive powers including declaring war, controlling federal spending, regulating commerce, and approving treaties. It also confirms presidential appointments.",ru:{q:"Назовите одно из полномочий Конгресса США.",c:"Объявляет войну",v:["Назначает судей Верховного суда","Исполняет федеральные законы","Непосредственно командует вооружёнными силами"],e:"Конгресс обладает исключительными полномочиями: объявлять войну, контролировать расходы, регулировать торговлю и утверждать договоры. Он также утверждает президентские назначения."}},
+{n:21,ch:'B',q:"How many U.S. Senators are there?",c:"One hundred (100)",v:["Fifty (50)","Four hundred thirty-five (435)","Two hundred (200)"],e:"There are 100 Senators — two from each of the 50 states. This equal representation gives small states the same Senate power as large ones, a key feature of the Great Compromise.",ru:{q:"Сколько сенаторов в США?",c:"Сто (100)",v:["Пятьдесят (50)","Четыреста тридцать пять (435)","Двести (200)"],e:"В Сенате 100 сенаторов — по два от каждого из 50 штатов. Такое равное представительство — ключевая особенность Великого компромисса."}},
+{n:22,ch:'B',q:"How long is a term for a U.S. Senator?",c:"Six (6) years",v:["Two (2) years","Four (4) years","Eight (8) years"],e:"Senators serve 6-year terms, with about one-third of Senate seats up for election every 2 years. This staggered system ensures continuity and reduces sudden political shifts.",ru:{q:"Каков срок полномочий сенатора США?",c:"Шесть (6) лет",v:["Два (2) года","Четыре (4) года","Восемь (8) лет"],e:"Сенаторы избираются на 6 лет, причём примерно треть мест выносится на выборы каждые 2 года. Такая ротация обеспечивает преемственность и стабильность."}},
+{n:23,ch:'B',q:"Who is one of your state's U.S. Senators now?",c:"Answers vary by state — know your own state's senators",v:["Nancy Pelosi","Mitch McConnell","Chuck Schumer"],e:"Every state has exactly two U.S. Senators. Before your interview, look up the current senators for your state at senate.gov, since they can change after elections.",ru:{q:"Кто сейчас является одним из сенаторов вашего штата?",c:"Ответ зависит от штата — узнайте своих сенаторов",v:["Нэнси Пелоси","Митч Макконнелл","Чак Шумер"],e:"В каждом штате ровно два сенатора США. Перед собеседованием найдите действующих сенаторов вашего штата на senate.gov — они меняются после выборов."}},
+{n:24,ch:'B',q:"How many voting members are in the House of Representatives?",c:"Four hundred thirty-five (435)",v:["One hundred (100)","Two hundred (200)","Five hundred (500)"],e:"The House has 435 voting members. Each state gets at least one representative, and the rest are apportioned based on population as determined by the census every 10 years.",ru:{q:"Сколько голосующих членов в Палате представителей?",c:"Четыреста тридцать пять (435)",v:["Сто (100)","Двести (200)","Пятьсот (500)"],e:"В Палате 435 голосующих членов. Каждый штат получает не менее одного представителя, остальные распределяются по численности населения по переписи каждые 10 лет."}},
+{n:25,ch:'B',q:"How long is a term for a member of the House of Representatives?",c:"Two (2) years",v:["Four (4) years","Six (6) years","Eight (8) years"],e:"Representatives serve 2-year terms, meaning the entire House faces re-election every two years. This keeps them closely accountable to their constituents' current views.",ru:{q:"Каков срок полномочий члена Палаты представителей?",c:"Два (2) года",v:["Четыре (4) года","Шесть (6) лет","Восемь (8) лет"],e:"Члены Палаты избираются на 2 года, то есть вся Палата проходит через выборы каждые два года. Это обеспечивает их тесную подотчётность избирателям."}},
+{n:26,ch:'B',q:"Why do U.S. Representatives serve shorter terms than Senators?",c:"To more closely follow public opinion",v:["Because the job pays less","Because there are more of them","The Constitution required it randomly"],e:"The Founders designed shorter terms for Representatives so they would stay responsive to voter sentiment. Senators' longer terms provide stability and allow for longer-range thinking.",ru:{q:"Почему члены Палаты представителей имеют более короткий срок, чем сенаторы?",c:"Чтобы точнее следовать общественному мнению",v:["Потому что работа оплачивается меньше","Потому что их больше","Конституция установила это случайно"],e:"Основатели предусмотрели более короткие сроки, чтобы представители оставались восприимчивы к настроениям избирателей. Более долгие сроки сенаторов обеспечивают стабильность."}},
+{n:27,ch:'B',q:"How many Senators does each state have?",c:"Two (2)",v:["One (1)","Three (3)","Varies by population"],e:"Every state, regardless of size or population, has exactly two senators. Rhode Island has the same Senate representation as California. This was agreed in the Great Compromise of 1787.",ru:{q:"Сколько сенаторов представляют каждый штат?",c:"Два (2)",v:["Один (1)","Три (3)","Зависит от численности населения"],e:"Каждый штат, независимо от размера, имеет ровно двух сенаторов. Это было закреплено Великим компромиссом 1787 года."}},
+{n:28,ch:'B',q:"Why does each state have two Senators?",c:"Equal representation for all states / the Great Compromise",v:["Because there are two major political parties","Because the first Congress had two senators","By tradition, not the Constitution"],e:"The Great Compromise of 1787 resolved a dispute between large and small states. Small states got equal Senate representation (2 per state); large states got proportional House representation.",ru:{q:"Почему каждый штат имеет двух сенаторов?",c:"Равное представительство всех штатов / Великий компромисс",v:["Потому что существуют две основные партии","Потому что у первого Конгресса было два сенатора","По традиции, а не по Конституции"],e:"Великий компромисс 1787 года разрешил спор между крупными и малыми штатами: малые получили равное представительство в Сенате, крупные — пропорциональное в Палате."}},
+{n:29,ch:'B',q:"Name your U.S. Representative.",c:"Answers vary by congressional district",v:["The Speaker of the House","Your state governor","Your state's senior senator"],e:"Your U.S. Representative represents your specific congressional district. Find your representative at house.gov using your address. This answer changes after each election.",ru:{q:"Назовите вашего представителя в Конгрессе.",c:"Ответ зависит от избирательного округа",v:["Спикер Палаты представителей","Губернатор вашего штата","Старший сенатор вашего штата"],e:"Ваш представитель в Конгрессе представляет конкретный округ. Найдите его на house.gov по адресу. Ответ меняется после каждых выборов."}},
+{n:30,ch:'B',q:"What is the name of the Speaker of the House of Representatives now?",c:"Mike Johnson (check USCIS for current name)",v:["Nancy Pelosi","Kevin McCarthy","Paul Ryan"],e:"The Speaker leads the House of Representatives and is second in the presidential line of succession after the Vice President. Always verify the current Speaker's name before your interview.",ru:{q:"Как зовут нынешнего Спикера Палаты представителей?",c:"Майк Джонсон (уточните на сайте USCIS)",v:["Нэнси Пелоси","Кевин Маккарти","Пол Райан"],e:"Спикер руководит Палатой представителей и второй в линии президентского преемства. Перед собеседованием уточните имя действующего Спикера на сайте uscis.gov."}},
+{n:31,ch:'B',q:"Who does a U.S. Senator represent?",c:"Citizens of their state / the people of their state",v:["All American voters equally","Only those who voted for them","The members of their political party"],e:"A U.S. Senator represents ALL people living in their state — not just those who voted for them or belong to their party. They are accountable to their entire state's population.",ru:{q:"Кого представляет сенатор США?",c:"Граждан своего штата / жителей своего штата",v:["Всех американских избирателей в равной мере","Только тех, кто за него проголосовал","Членов своей политической партии"],e:"Сенатор США представляет ВСЕХ жителей своего штата — не только тех, кто за него голосовал. Он подотчётен всему населению штата."}},
+{n:32,ch:'B',q:"Who elects U.S. Senators?",c:"Citizens of their state",v:["The state legislature","The Electoral College","The President"],e:"Since the 17th Amendment (1913), U.S. Senators are elected directly by voters in their state. Before that, they were chosen by state legislatures.",ru:{q:"Кто избирает сенаторов США?",c:"Граждане их штата",v:["Законодательное собрание штата","Коллегия выборщиков","Президент"],e:"После 17-й поправки (1913) сенаторов США избирают напрямую граждане их штата. Ранее их выбирали законодательные собрания штатов."}},
+{n:33,ch:'B',q:"Who does a member of the House represent?",c:"Citizens in their congressional district",v:["All citizens of their state","The national party leadership","Those who funded their campaign"],e:"Each Representative serves one congressional district — a geographic subdivision of their state. Districts are redrawn every 10 years based on census population data.",ru:{q:"Кого представляет член Палаты представителей?",c:"Граждан своего избирательного округа",v:["Всех граждан своего штата","Руководство национальной партии","Тех, кто финансировал его кампанию"],e:"Каждый представитель обслуживает один избирательный округ — географическое подразделение штата. Границы округов пересматриваются каждые 10 лет по данным переписи."}},
+{n:34,ch:'B',q:"Who elects members of the House of Representatives?",c:"Citizens from their district",v:["All citizens of their state","The state governor","Congress itself"],e:"Voters within each congressional district elect their Representative by direct popular vote. Every two years, all 435 House seats are up for election.",ru:{q:"Кто избирает членов Палаты представителей?",c:"Граждане их округа",v:["Все граждане штата","Губернатор штата","Сам Конгресс"],e:"Избиратели каждого округа выбирают своего представителя прямым голосованием. Каждые два года все 435 мест в Палате выносятся на выборы."}},
+{n:35,ch:'B',q:"Why do some states have more Representatives in the House?",c:"Because of the state's population",v:["Because of the state's land area","Because wealthier states get more seats","Because older states have more seats"],e:"House seats are apportioned by population. After each 10-year census, seats are redistributed. California has about 52 representatives; Wyoming has just 1.",ru:{q:"Почему в некоторых штатах больше представителей в Палате?",c:"Из-за численности населения штата",v:["Из-за площади штата","Потому что богатые штаты получают больше мест","Потому что старые штаты имеют больше мест"],e:"Места в Палате распределяются по населению. После каждой 10-летней переписи места перераспределяются. В Калифорнии около 52 представителей, в Вайоминге — 1."}},
+{n:36,ch:'B',q:"The President is elected for how many years?",c:"Four (4) years",v:["Two (2) years","Six (6) years","Eight (8) years"],e:"The President serves a 4-year term and may be re-elected once, for a maximum of two terms (8 years total), as established by the 22nd Amendment ratified in 1951.",ru:{q:"На сколько лет избирается Президент?",c:"Четыре (4) года",v:["Два (2) года","Шесть (6) лет","Восемь (8) лет"],e:"Президент избирается на 4 года и может быть переизбран один раз — максимум два срока (8 лет) согласно 22-й поправке, ратифицированной в 1951 году."}},
+{n:37,ch:'B',q:"The President can serve only two terms. Why?",c:"To prevent any one person from gaining too much power / 22nd Amendment",v:["Because the job is too tiring for more than 8 years","Because two-party tradition requires it","The Constitution sets a one-term limit"],e:"The 22nd Amendment (1951) established the two-term limit after Franklin Roosevelt served four terms. It prevents any president from accumulating too much political power over time.",ru:{q:"Президент может занимать пост не более двух сроков. Почему?",c:"Чтобы не допустить чрезмерного сосредоточения власти / 22-я поправка",v:["Потому что работа слишком тяжела более чем на 8 лет","Потому что двухпартийная традиция этого требует","Конституция устанавливает ограничение в один срок"],e:"22-я поправка (1951) ввела ограничение в два срока после того, как Рузвельт занимал пост четыре срока. Она не позволяет президенту накапливать чрезмерную власть."}},
+{n:38,ch:'B',q:"What is the name of the President of the United States now?",c:"Donald Trump (check USCIS for current name)",v:["Joe Biden","Barack Obama","George W. Bush"],e:"Always verify the current President's name before your naturalization interview — it changes after elections. Visit uscis.gov/citizenship/testupdates for the official current answer.",ru:{q:"Как зовут нынешнего Президента США?",c:"Дональд Трамп (уточните на сайте USCIS)",v:["Джо Байден","Барак Обама","Джордж Буш-младший"],e:"Перед собеседованием на гражданство всегда уточняйте имя действующего президента — оно меняется после выборов. Посетите uscis.gov/citizenship/testupdates."}},
+{n:39,ch:'B',q:"What is the name of the Vice President now?",c:"JD Vance (check USCIS for current name)",v:["Kamala Harris","Mike Pence","Tim Kaine"],e:"The Vice President serves as President of the Senate and becomes President if the President can no longer serve. Always check the current name at uscis.gov before your interview.",ru:{q:"Как зовут нынешнего Вице-президента?",c:"Джей Ди Вэнс (уточните на сайте USCIS)",v:["Камала Харрис","Майк Пенс","Тим Кейн"],e:"Вице-президент председательствует в Сенате и становится Президентом, если Президент не может исполнять обязанности. Уточните имя на uscis.gov перед собеседованием."}},
+{n:40,ch:'B',q:"If the President can no longer serve, who becomes President?",c:"The Vice President",v:["The Speaker of the House","The Secretary of State","The Senate Majority Leader"],e:"The Vice President is first in the presidential line of succession. This has happened 9 times in U.S. history, most recently in 1974 when Gerald Ford succeeded Richard Nixon.",ru:{q:"Если Президент не может исполнять обязанности, кто становится Президентом?",c:"Вице-президент",v:["Спикер Палаты представителей","Государственный секретарь","Лидер большинства в Сенате"],e:"Вице-президент стоит первым в линии президентского преемства. Это происходило 9 раз в истории США, в последний раз — в 1974 году, когда Джеральд Форд сменил Ричарда Никсона."}},
+{n:41,ch:'B',q:"Name one power of the President.",c:"Signs or vetoes bills / Commander in Chief / appoints federal judges",v:["Makes federal laws","Declares war without Congress","Sets the federal budget alone"],e:"Presidential powers include: signing or vetoing legislation, commanding the military, making treaties (with Senate approval), appointing judges and Cabinet members, and granting pardons.",ru:{q:"Назовите одно из полномочий Президента.",c:"Подписывает или накладывает вето на законопроекты / Главнокомандующий / назначает судей",v:["Принимает федеральные законы","Объявляет войну без Конгресса","Единолично устанавливает бюджет"],e:"Полномочия Президента: подписывать или ветировать законы, командовать армией, заключать договоры (с одобрения Сената), назначать судей и министров, осуществлять помилование."}},
+{n:42,ch:'B',q:"Who is Commander in Chief of the military?",c:"The President",v:["The Secretary of Defense","The Chairman of the Joint Chiefs","The Vice President"],e:"The Constitution makes the President the Commander in Chief of all U.S. armed forces. This civilian control of the military is a cornerstone of American democracy.",ru:{q:"Кто является Главнокомандующим вооружёнными силами?",c:"Президент",v:["Министр обороны","Председатель Объединённого комитета начальников штабов","Вице-президент"],e:"Конституция делает Президента Главнокомандующим всеми вооружёнными силами США. Гражданский контроль над военными — краеугольный камень американской демократии."}},
+{n:43,ch:'B',q:"Who signs bills to become laws?",c:"The President",v:["The Speaker of the House","The Chief Justice","The Senate Majority Leader"],e:"After Congress passes a bill, the President signs it into law or vetoes it. If vetoed, Congress can override with a two-thirds majority in both chambers.",ru:{q:"Кто подписывает законопроекты, чтобы они стали законами?",c:"Президент",v:["Спикер Палаты представителей","Председатель Верховного суда","Лидер большинства в Сенате"],e:"После принятия законопроекта Конгрессом Президент подписывает его или накладывает вето. Вето может быть преодолено двумя третями голосов в обеих палатах."}},
+{n:44,ch:'B',q:"Who vetoes bills?",c:"The President",v:["The Supreme Court","The Senate","The Vice President"],e:"The President's veto power is a key check on Congress. Congress can override a veto with a two-thirds supermajority vote in both the House and Senate.",ru:{q:"Кто накладывает вето на законопроекты?",c:"Президент",v:["Верховный суд","Сенат","Вице-президент"],e:"Право вето Президента — ключной инструмент сдерживания Конгресса. Вето может быть преодолено квалифицированным большинством в две трети в обеих палатах."}},
+{n:45,ch:'B',q:"Who appoints federal judges?",c:"The President",v:["Congress","The Chief Justice","State governors collectively"],e:"The President nominates all federal judges, including Supreme Court Justices. The Senate must then confirm the nomination by a majority vote. Federal judges serve for life once confirmed.",ru:{q:"Кто назначает федеральных судей?",c:"Президент",v:["Конгресс","Председатель Верховного суда","Губернаторы штатов коллективно"],e:"Президент назначает всех федеральных судей, включая судей Верховного суда. Сенат утверждает назначение большинством голосов. Федеральные судьи занимают должности пожизненно."}},
+{n:46,ch:'B',q:"Name one part of the Executive Branch.",c:"The President / Cabinet / federal departments and agencies",v:["The Supreme Court","The Senate","The House of Representatives"],e:"The Executive Branch includes the President, Vice President, 15 Cabinet departments (like Defense and State), and dozens of federal agencies like the FBI and NASA.",ru:{q:"Назовите одну часть Исполнительной ветви власти.",c:"Президент / Кабинет / федеральные департаменты и ведомства",v:["Верховный суд","Сенат","Палата представителей"],e:"Исполнительная ветвь включает Президента, Вице-президента, 15 департаментов Кабинета (например, Министерство обороны и Госдепартамент) и десятки ведомств, таких как ФБР и НАСА."}},
+{n:47,ch:'B',q:"What does the President's Cabinet do?",c:"Advises the President",v:["Makes federal laws","Manages the Supreme Court","Controls the military budget"],e:"The Cabinet is made up of the heads of 15 executive departments plus other senior officials. They advise the President on policy and manage their respective departments.",ru:{q:"Что делает Кабинет министров президента?",c:"Консультирует Президента",v:["Принимает федеральные законы","Управляет Верховным судом","Контролирует военный бюджет"],e:"Кабинет состоит из руководителей 15 исполнительных департаментов и других чиновников. Они консультируют Президента по вопросам политики и управляют своими ведомствами."}},
+{n:48,ch:'B',q:"Name two Cabinet-level positions.",c:"Secretary of State and Secretary of Defense",v:["Chief Justice and Senate President","Speaker of the House and Senate Majority Leader","FBI Director and CIA Director"],e:"The 15 Cabinet departments include State (foreign policy), Defense (military), Treasury (finances), Justice (law enforcement), Homeland Security, and others. The Attorney General also holds a Cabinet-level position.",ru:{q:"Назовите две должности уровня Кабинета.",c:"Государственный секретарь и министр обороны",v:["Председатель Верховного суда и председатель Сената","Спикер Палаты и лидер большинства в Сенате","Директор ФБР и директор ЦРУ"],e:"15 департаментов Кабинета включают Государственный, Обороны, Казначейства, Юстиции, Внутренней безопасности и другие. Генеральный прокурор также занимает должность уровня Кабинета."}},
+{n:49,ch:'B',q:"Why is the Electoral College important?",c:"It decides who is elected President — a compromise between popular vote and Congress",v:["It ensures only educated citizens vote","It is required by international law","It was created to balance states vs. cities"],e:"The Electoral College has 538 electors (one per congressional seat plus 3 for D.C.). A candidate needs 270 electoral votes to win. It was a compromise between direct popular election and congressional selection.",ru:{q:"Почему важна Коллегия выборщиков?",c:"Она определяет, кто избирается Президентом — компромисс между всенародным голосованием и Конгрессом",v:["Она гарантирует, что голосуют только образованные граждане","Это требование международного права","Она создана для баланса между штатами и городами"],e:"Коллегия выборщиков состоит из 538 выборщиков. Для победы нужно 270 голосов. Это компромисс между прямым всенародным голосованием и выбором Конгрессом."}},
+{n:50,ch:'B',q:"Name one part of the Judicial Branch.",c:"The Supreme Court / federal courts",v:["The President's legal team","The Department of Justice","The Senate Judiciary Committee"],e:"The Judicial Branch includes the Supreme Court (highest), 13 U.S. Courts of Appeals, 94 U.S. District Courts, and specialized courts. Federal judges are appointed for life.",ru:{q:"Назовите одну часть Судебной ветви власти.",c:"Верховный суд / федеральные суды",v:["Юридическая команда Президента","Министерство юстиции","Судебный комитет Сената"],e:"Судебная ветвь включает Верховный суд, 13 апелляционных судов США, 94 окружных суда и специализированные суды. Федеральные судьи назначаются пожизненно."}},
+{n:51,ch:'B',q:"What does the Judicial Branch do?",c:"Reviews and interprets laws / decides if laws violate the Constitution",v:["Writes new laws","Commands the military","Collects federal taxes"],e:"The courts interpret laws and resolve disputes. Most importantly, they can strike down laws that violate the Constitution — a power called judicial review established in Marbury v. Madison (1803).",ru:{q:"Что делает Судебная ветвь власти?",c:"Пересматривает и толкует законы / решает, не нарушают ли законы Конституцию",v:["Пишет новые законы","Командует вооружёнными силами","Собирает федеральные налоги"],e:"Суды толкуют законы и разрешают споры. Главное — они могут признавать законы неконституционными. Это право судебного контроля установлено в деле Марбери против Мэдисона (1803)."}},
+{n:52,ch:'B',q:"What is the highest court in the United States?",c:"The Supreme Court",v:["The Federal Court of Appeals","The U.S. District Court","The International Court of Justice"],e:"The Supreme Court is the final authority on constitutional questions. Its decisions are binding on all lower courts and cannot be appealed further within the U.S. legal system.",ru:{q:"Какой суд является высшим в США?",c:"Верховный суд",v:["Федеральный апелляционный суд","Окружной суд США","Международный суд справедливости"],e:"Верховный суд — окончательная инстанция по конституционным вопросам. Его решения обязательны для всех нижестоящих судов и не подлежат дальнейшему обжалованию."}},
+{n:53,ch:'B',q:"How many seats are on the Supreme Court?",c:"Nine (9)",v:["Seven (7)","Eleven (11)","Twelve (12)"],e:"The Supreme Court has 9 Justices: one Chief Justice and 8 Associate Justices. The number is set by Congress and has been 9 since 1869. Justices are appointed for life.",ru:{q:"Сколько мест в Верховном суде?",c:"Девять (9)",v:["Семь (7)","Одиннадцать (11)","Двенадцать (12)"],e:"Верховный суд состоит из 9 судей: Председателя и 8 ассоциированных судей. Их число устанавливается Конгрессом и не менялось с 1869 года. Судьи назначаются пожизненно."}},
+{n:54,ch:'B',q:"How many justices are usually needed to decide a case?",c:"Five (5) — a majority",v:["All nine (9)","Three (3)","Seven (7)"],e:"A simple majority of 5 out of 9 Justices decides most cases. A 4-4 tie upholds the lower court's decision. The Court typically hears about 60–70 cases per year.",ru:{q:"Сколько судей обычно необходимо для вынесения решения?",c:"Пять (5) — большинство",v:["Все девять (9)","Три (3)","Семь (7)"],e:"Простое большинство из 5 из 9 судей решает большинство дел. При счёте 4:4 решение нижестоящего суда остаётся в силе. Суд рассматривает около 60–70 дел в год."}},
+{n:55,ch:'B',q:"How long do Supreme Court Justices serve?",c:"For life (lifetime appointment)",v:["Ten (10) years","Six (6) years","Until age 70"],e:"Article III of the Constitution grants federal judges lifetime tenure during 'good behavior.' This independence allows them to make decisions based on law rather than political popularity.",ru:{q:"Как долго служат судьи Верховного суда?",c:"Пожизненно (пожизненное назначение)",v:["Десять (10) лет","Шесть (6) лет","До достижения 70 лет"],e:"Статья III Конституции предоставляет федеральным судьям пожизненное пребывание в должности. Это позволяет им принимать решения, основанные на законе, а не на политической конъюнктуре."}},
+{n:56,ch:'B',q:"Why do Supreme Court Justices serve for life?",c:"To be independent from political pressure",v:["Because no one else wants the job","To save money on reappointments","It is a tradition from British law"],e:"Lifetime tenure protects judges from political pressure. They don't need to worry about re-election or pleasing the President who appointed them, allowing them to interpret the law impartially.",ru:{q:"Почему судьи Верховного суда служат пожизненно?",c:"Чтобы быть независимыми от политического давления",v:["Потому что никто другой не хочет эту работу","Чтобы сэкономить на назначениях","Это традиция британского права"],e:"Пожизненный срок защищает судей от политического давления. Им не нужно угождать назначившему их президенту, что позволяет беспристрастно толковать закон."}},
+{n:57,ch:'B',q:"Who is the Chief Justice of the United States now?",c:"John Roberts (check USCIS for current name)",v:["Samuel Alito","Clarence Thomas","Sonia Sotomayor"],e:"The Chief Justice leads the Supreme Court and the federal judicial system. John Roberts has served as Chief Justice since 2005. Verify the current Chief Justice at uscis.gov before your interview.",ru:{q:"Как зовут нынешнего Председателя Верховного суда США?",c:"Джон Робертс (уточните на сайте USCIS)",v:["Сэмюэл Алито","Кларенс Томас","Соня Сотомайор"],e:"Председатель Верховного суда руководит всей федеральной судебной системой. Джон Робертс занимает этот пост с 2005 года. Уточните имя на uscis.gov перед собеседованием."}},
+{n:58,ch:'B',q:"Name one power that belongs only to the federal government.",c:"Print money / declare war / make treaties / create an army",v:["Issue driver's licenses","Provide public schooling","Set zoning laws"],e:"Only the federal government can print money, declare war, make treaties with foreign nations, and maintain armed forces. States cannot do these things on their own.",ru:{q:"Назовите одно полномочие, принадлежащее исключительно федеральному правительству.",c:"Печатать деньги / объявлять войну / заключать договоры / создавать армию",v:["Выдавать водительские удостоверения","Обеспечивать государственное образование","Устанавливать правила зонирования"],e:"Только федеральное правительство может печатать деньги, объявлять войну, заключать договоры с иностранными государствами и содержать вооружённые силы."}},
+{n:59,ch:'B',q:"Name one power that belongs only to the states.",c:"Provide schooling / issue driver's licenses / maintain police forces",v:["Print money","Declare war","Set foreign policy"],e:"States have reserved powers under the 10th Amendment. These include running public schools, issuing driver's licenses, managing elections, establishing local governments, and maintaining police departments.",ru:{q:"Назовите одно полномочие, принадлежащее исключительно штатам.",c:"Обеспечивать образование / выдавать водительские удостоверения / содержать полицию",v:["Печатать деньги","Объявлять войну","Определять внешнюю политику"],e:"Штаты обладают зарезервированными полномочиями по 10-й поправке: организация школ, выдача водительских удостоверений, проведение выборов и содержание полиции."}},
+{n:60,ch:'B',q:"What is the purpose of the 10th Amendment?",c:"Powers not given to the federal government belong to the states or the people",v:["It guarantees freedom of speech","It abolishes slavery","It gives Congress power to tax"],e:"The 10th Amendment reserves all powers not specifically given to the federal government — or prohibited to the states — to the states or to the people. It is the foundation of federalism.",ru:{q:"В чём состоит цель 10-й поправки?",c:"Полномочия, не переданные федеральному правительству, принадлежат штатам или народу",v:["Она гарантирует свободу слова","Она отменяет рабство","Она наделяет Конгресс правом взимать налоги"],e:"10-я поправка резервирует все полномочия, не переданные федеральному правительству, за штатами или народом. Она является основой федерализма."}},
+{n:61,ch:'B',q:"Who is the Governor of your state now?",c:"Answers vary by state — know your own state's governor",v:["The President of the United States","Your U.S. Senator","Your mayor"],e:"Each state has a Governor who serves as its chief executive. Look up your state's current governor before your interview, as governors change after elections. Most serve 4-year terms.",ru:{q:"Кто является губернатором вашего штата?",c:"Ответ зависит от штата — узнайте губернатора своего штата",v:["Президент США","Ваш сенатор США","Ваш мэр"],e:"В каждом штате есть губернатор — главное исполнительное лицо штата. Узнайте действующего губернатора перед собеседованием, так как они меняются после выборов."}},
+{n:62,ch:'B',q:"What is the capital of your state?",c:"Answers vary by state — know your own state's capital",v:["Washington, D.C.","New York City","Your largest city"],e:"Each state has a capital city where the state legislature meets and the governor works. Note that state capitals are often not the largest city — for example, Sacramento (not Los Angeles) is California's capital.",ru:{q:"Какова столица вашего штата?",c:"Ответ зависит от штата — узнайте столицу своего штата",v:["Вашингтон, округ Колумбия","Нью-Йорк","Крупнейший город штата"],e:"В каждом штате есть столица, где заседает законодательное собрание и работает губернатор. Обратите внимание: столица часто не является крупнейшим городом — например, столица Калифорнии — Сакраменто."}},
+{n:63,ch:'C',q:"There are four amendments about who can vote. Describe one.",c:"Citizens 18 and older can vote",v:["Only property owners can vote","Men and women of any age may vote","Only natural-born citizens can vote"],e:"Four amendments expanded voting rights: the 15th (race can't be used to deny the vote), 19th (women's suffrage, 1920), 24th (no poll tax), and 26th (lowered voting age to 18 in 1971).",ru:{q:"Существуют четыре поправки о праве голоса. Опишите одну.",c:"Граждане в возрасте 18 лет и старше могут голосовать",v:["Голосовать могут только владельцы собственности","Мужчины и женщины любого возраста могут голосовать","Голосовать могут только граждане по рождению"],e:"Четыре поправки расширили право голоса: 15-я (нельзя лишить голоса по расовому признаку), 19-я (право женщин, 1920), 24-я (отмена избирательного налога), 26-я (возраст с 18 лет, 1971)."}},
+{n:64,ch:'C',q:"Who can vote in federal elections, run for federal office, and serve on a jury in the United States?",c:"U.S. citizens",v:["All permanent residents","Anyone over 21","All legal immigrants"],e:"Only U.S. citizens may vote in federal elections, run for most federal offices, and serve on federal juries. Permanent residents (green card holders) cannot vote in federal elections.",ru:{q:"Кто может голосовать на федеральных выборах, баллотироваться на федеральные должности и участвовать в суде присяжных?",c:"Граждане США",v:["Все постоянные жители","Все лица старше 21 года","Все законные иммигранты"],e:"Только граждане США могут голосовать на федеральных выборах, баллотироваться на большинство федеральных должностей и заседать в федеральном суде присяжных."}},
+{n:65,ch:'C',q:"Name three rights of everyone living in the United States.",c:"Freedom of speech, freedom of religion, and freedom of assembly",v:["Right to vote, a passport, and free healthcare","Right to bear arms, free education, and a job","Social Security, Medicare, and welfare benefits"],e:"The First Amendment protects speech, religion, press, assembly, and petition. These rights apply to everyone on U.S. soil — citizens and non-citizens alike — under constitutional protections.",ru:{q:"Назовите три права, которыми обладает каждый, кто живёт в США.",c:"Свобода слова, свобода вероисповедания и свобода собраний",v:["Право голосовать, иметь паспорт и бесплатную медицину","Право на оружие, бесплатное образование и работу","Социальное обеспечение, Medicare и социальные пособия"],e:"Первая поправка защищает свободу слова, вероисповедания, печати, собраний и петиций. Эти права распространяются на всех, кто находится на территории США — граждан и не-граждан."}},
+{n:66,ch:'C',q:"What do we show loyalty to when we say the Pledge of Allegiance?",c:"The United States and the flag",v:["The President and Congress","The Constitution only","The military and veterans"],e:"The Pledge of Allegiance pledges loyalty to the American flag and to the republic it represents. Written in 1892, it has been a central expression of American civic identity.",ru:{q:"Когда мы произносим Клятву верности, чему мы выражаем лояльность?",c:"Соединённым Штатам и флагу",v:["Президенту и Конгрессу","Только Конституции","Вооружённым силам и ветеранам"],e:"Клятва верности выражает преданность американскому флагу и республике, которую он символизирует. Написанная в 1892 году, она стала центральным выражением американской гражданской идентичности."}},
+{n:67,ch:'C',q:"Name two promises in the Oath of Allegiance.",c:"Give up loyalty to other countries and defend the Constitution",v:["Learn English and pay taxes","Buy property and serve in the military","Vote in every election and serve on a jury"],e:"The Oath of Allegiance requires new citizens to renounce loyalty to other countries, support and defend the U.S. Constitution, obey U.S. laws, and bear arms or perform civilian service if required.",ru:{q:"Назовите два обещания, содержащихся в Клятве верности.",c:"Отказаться от верности другим странам и защищать Конституцию",v:["Выучить английский язык и платить налоги","Приобрести собственность и служить в армии","Голосовать на каждых выборах и участвовать в суде присяжных"],e:"Клятва верности требует: отречься от верности другим странам, поддерживать и защищать Конституцию США, соблюдать законы и нести военную или гражданскую службу при необходимости."}},
+{n:68,ch:'C',q:"How can people become U.S. citizens?",c:"By birth or through naturalization",v:["By living in the U.S. for 10 years","By marrying a U.S. citizen automatically","By serving in the military for 4 years"],e:"U.S. citizenship is acquired by birth on U.S. soil (jus soli), birth abroad to U.S. citizen parents (derivation), or through naturalization — the legal process for adult immigrants.",ru:{q:"Как люди могут стать гражданами США?",c:"По рождению или через натурализацию",v:["Прожив в США 10 лет","Вступив в брак с гражданином США автоматически","Прослужив в армии 4 года"],e:"Гражданство США приобретается по рождению на территории США, по рождению за рубежом от родителей-граждан или через натурализацию — юридический процесс для взрослых иммигрантов."}},
+{n:69,ch:'C',q:"Name two examples of civic participation.",c:"Vote and contact elected officials",v:["Pay taxes and obey laws","Watch the news and read history","Buy American products and learn English"],e:"Americans can participate in democracy by voting, running for office, joining political parties, contacting representatives, attending community meetings, signing petitions, and volunteering for campaigns.",ru:{q:"Приведите два примера гражданского участия.",c:"Голосовать и обращаться к избранным чиновникам",v:["Платить налоги и соблюдать законы","Смотреть новости и читать историю","Покупать американские товары и учить английский"],e:"Американцы участвуют в демократии, голосуя, баллотируясь, вступая в партии, обращаясь к представителям, подписывая петиции и занимаясь волонтёрством."}},
+{n:70,ch:'C',q:"Name one way Americans can serve their country.",c:"Serve in the military / pay taxes / vote / work for government",v:["Move to another country","Avoid jury duty","Ignore local elections"],e:"Americans serve their country in many ways: military service, paying taxes, jury duty, voting, running for office, obeying laws, and community volunteering are all civic responsibilities.",ru:{q:"Назовите один способ служения своей стране для американцев.",c:"Служить в армии / платить налоги / голосовать / работать в правительстве",v:["Переехать в другую страну","Уклоняться от суда присяжных","Игнорировать местные выборы"],e:"Американцы служат стране многими способами: военная служба, уплата налогов, участие в суде присяжных, голосование, работа в правительстве и волонтёрство."}},
+{n:71,ch:'C',q:"Why is it important to pay federal taxes?",c:"It is required by law and funds the government",v:["To earn points toward citizenship","It is optional but encouraged","To support the political party in power"],e:"The 16th Amendment (1913) gave Congress the power to levy income taxes. Federal taxes fund national defense, Social Security, Medicare, federal courts, roads, and many other government services.",ru:{q:"Почему важно платить федеральные налоги?",c:"Это требуется по закону и финансирует правительство",v:["Чтобы заработать баллы для гражданства","Это добровольно, но приветствуется","Чтобы поддержать политическую партию у власти"],e:"16-я поправка (1913) наделила Конгресс правом взимать подоходный налог. Федеральные налоги финансируют оборону, социальное обеспечение, Medicare, суды, дороги и другие услуги."}},
+{n:72,ch:'C',q:"It is important for men ages 18-25 to register for Selective Service. Why?",c:"It is required by law and ensures fairness if a draft is needed",v:["It guarantees them a job in the military","It gives them the right to vote","It is a tradition with no legal requirement"],e:"The Military Selective Service Act requires all male U.S. residents ages 18-25 to register. It maintains a database in case a military draft is ever needed. Failure to register has legal consequences.",ru:{q:"Почему важно, чтобы мужчины в возрасте 18–25 лет регистрировались в Службе воинского учёта?",c:"Это требуется по закону и обеспечивает справедливость в случае призыва",v:["Это гарантирует им работу в армии","Это даёт им право голосовать","Это традиция без юридического требования"],e:"Закон о военной выборочной службе обязывает всех мужчин-жителей США 18–25 лет регистрироваться. Это база данных на случай призыва. Отказ от регистрации влечёт юридические последствия."}},
+{n:73,ch:'D',q:"The colonists came to America for many reasons. Name one.",c:"Religious freedom / political liberty / economic opportunity / to escape persecution",v:["To spread their language to the world","To conquer Native American peoples","To build a monarchy under a new king"],e:"Colonists came seeking religious freedom (Pilgrims, Puritans), economic opportunity (Virginia settlers), and political liberty. Many also fled persecution — religious, political, or social — in Europe.",ru:{q:"Колонисты приезжали в Америку по многим причинам. Назовите одну.",c:"Религиозная свобода / политическая свобода / экономические возможности / спастись от преследований",v:["Чтобы распространить свой язык по всему миру","Чтобы завоевать коренные народы","Чтобы создать монархию под новым королём"],e:"Колонисты искали религиозную свободу (пилигримы, пуритане), экономические возможности (поселенцы Вирджинии) и политическую свободу. Многие бежали от преследований в Европе."}},
+{n:74,ch:'D',q:"Who lived in America before the Europeans arrived?",c:"American Indians / Native Americans",v:["Spanish settlers","African explorers","British colonists"],e:"American Indians (also called Native Americans or Indigenous peoples) inhabited North America for thousands of years before European contact. There were hundreds of distinct tribes with different languages and cultures.",ru:{q:"Кто жил в Америке до прихода европейцев?",c:"Американские индейцы / коренные американцы",v:["Испанские поселенцы","Африканские исследователи","Британские колонисты"],e:"Американские индейцы населяли Северную Америку тысячи лет до контакта с европейцами. Существовали сотни отдельных племён с разными языками и культурами."}},
+{n:75,ch:'D',q:"What group of people was taken from their homes and sold as slaves?",c:"Africans / people from Africa",v:["Native Americans","Irish immigrants","Chinese laborers"],e:"Between 1619 and 1808, over 400,000 Africans were forcibly brought to what became the United States and enslaved. Millions more were brought to other parts of the Americas during the transatlantic slave trade.",ru:{q:"Какую группу людей забрали из их домов и продали в рабство?",c:"Африканцы / жители Африки",v:["Коренные американцы","Ирландские иммигранты","Китайские рабочие"],e:"Между 1619 и 1808 годами более 400 000 африканцев были принудительно привезены в США и обращены в рабство. Миллионы других — в другие части Америк в ходе работорговли."}},
+{n:76,ch:'D',q:"What war did Americans fight to win independence from Britain?",c:"The American Revolution / Revolutionary War",v:["The Civil War","The War of 1812","The French and Indian War"],e:"The Revolutionary War (1775–1783) was fought between the 13 colonies and Britain. The colonies won, and Britain recognized American independence in the Treaty of Paris (1783).",ru:{q:"В какой войне американцы сражались за независимость от Великобритании?",c:"Американская революция / Война за независимость",v:["Гражданская война","Война 1812 года","Война с французами и индейцами"],e:"Война за независимость (1775–1783) велась между 13 колониями и Великобританией. Колонии победили, и Великобритания признала их независимость по Парижскому договору (1783)."}},
+{n:77,ch:'D',q:"Name one reason colonists declared independence from Britain.",c:"High taxes / taxation without representation / no self-government",v:["Britain refused to trade with the colonies","Britain invaded France","The colonists wanted a king of their own choosing"],e:"'Taxation without representation' was a core grievance — Britain taxed the colonies (through the Stamp Act, Tea Act, etc.) but denied them seats in Parliament to vote on those taxes.",ru:{q:"Назовите одну причину, по которой колонисты объявили независимость от Великобритании.",c:"Высокие налоги / налогообложение без представительства / отсутствие самоуправления",v:["Великобритания отказалась торговать с колониями","Великобритания вторглась во Францию","Колонисты хотели короля по своему выбору"],e:"«Налогообложение без представительства» было ключевой претензией — Великобритания облагала колонии налогами, но не давала им мест в парламенте."}},
+{n:78,ch:'D',q:"Who wrote the Declaration of Independence?",c:"Thomas Jefferson",v:["George Washington","Benjamin Franklin","John Adams"],e:"Thomas Jefferson wrote the Declaration of Independence in 1776 at age 33. Benjamin Franklin and John Adams made minor edits. Jefferson later served as the third President of the United States.",ru:{q:"Кто написал Декларацию независимости?",c:"Томас Джефферсон",v:["Джордж Вашингтон","Бенджамин Франклин","Джон Адамс"],e:"Томас Джефферсон написал Декларацию независимости в 1776 году в возрасте 33 лет. Бенджамин Франклин и Джон Адамс внесли незначительные правки. Впоследствии Джефферсон стал третьим президентом."}},
+{n:79,ch:'D',q:"When was the Declaration of Independence adopted?",c:"July 4, 1776",v:["July 4, 1789","September 17, 1787","March 4, 1801"],e:"The Continental Congress formally adopted the Declaration on July 4, 1776 — now celebrated as Independence Day. The document was signed by 56 delegates over the following weeks.",ru:{q:"Когда была принята Декларация независимости?",c:"4 июля 1776 года",v:["4 июля 1789 года","17 сентября 1787 года","4 марта 1801 года"],e:"Континентальный конгресс официально принял Декларацию 4 июля 1776 года — теперь этот день отмечается как День независимости. Документ подписали 56 делегатов."}},
+{n:80,ch:'D',q:"Name one key event of the American Revolution.",c:"Battle of Yorktown / Washington crossing the Delaware / Battle of Bunker Hill",v:["The Battle of Gettysburg","Fort Sumter","The Emancipation Proclamation"],e:"Key events include the Battles of Lexington and Concord (1775), Washington's crossing of the Delaware (1776), Valley Forge (1777–78), and the final British surrender at Yorktown (1781).",ru:{q:"Назовите одно ключевое событие Американской революции.",c:"Битва при Йорктауне / переправа Вашингтона через Делавэр / Битва при Банкер-Хилл",v:["Битва при Геттисберге","Форт-Самтер","Прокламация об освобождении"],e:"Ключевые события: битвы при Лексингтоне и Конкорде (1775), переправа Вашингтона через Делавэр (1776), Вэлли-Фордж (1777–78) и капитуляция британцев при Йорктауне (1781)."}},
+{n:81,ch:'D',q:"There were 13 original states. Name five.",c:"Virginia, Massachusetts, New York, Pennsylvania, Georgia (any 5 of the 13)",v:["Texas, California, Florida, Ohio, Illinois","Hawaii, Alaska, Maine, Oregon, Nevada","Missouri, Kansas, Nebraska, Colorado, Utah"],e:"The 13 original states were: Delaware, Pennsylvania, New Jersey, Georgia, Connecticut, Massachusetts, Maryland, South Carolina, New Hampshire, Virginia, New York, North Carolina, and Rhode Island.",ru:{q:"Первоначально насчитывалось 13 штатов. Назовите пять из них.",c:"Виргиния, Массачусетс, Нью-Йорк, Пенсильвания, Джорджия (любые 5 из 13)",v:["Техас, Калифорния, Флорида, Огайо, Иллинойс","Гавайи, Аляска, Мэн, Орегон, Невада","Миссури, Канзас, Небраска, Колорадо, Юта"],e:"13 первоначальных штатов: Делавэр, Пенсильвания, Нью-Джерси, Джорджия, Коннектикут, Массачусетс, Мэриленд, Южная Каролина, Нью-Гэмпшир, Виргиния, Нью-Йорк, Северная Каролина и Род-Айленд."}},
+{n:82,ch:'D',q:"What founding document was written in 1787?",c:"The U.S. Constitution",v:["The Declaration of Independence","The Bill of Rights","The Articles of Confederation"],e:"The Constitution was drafted at the Constitutional Convention in Philadelphia in 1787, replacing the weaker Articles of Confederation. It was ratified in 1788 and took effect in 1789.",ru:{q:"Какой основополагающий документ был написан в 1787 году?",c:"Конституция США",v:["Декларация независимости","Билль о правах","Статьи Конфедерации"],e:"Конституция была разработана на Конституционном конвенте в Филадельфии в 1787 году. Она заменила Статьи Конфедерации, была ратифицирована в 1788-м и вступила в силу в 1789 году."}},
+{n:83,ch:'D',q:"The Federalist Papers supported the Constitution. Name one writer.",c:"James Madison, Alexander Hamilton, or John Jay",v:["Thomas Jefferson","George Washington","Benjamin Franklin"],e:"The 85 Federalist Papers were written by Alexander Hamilton, James Madison, and John Jay under the pen name 'Publius' in 1787–88 to argue for ratification of the Constitution.",ru:{q:"Документы федералиста поддержали Конституцию. Назовите одного из авторов.",c:"Джеймс Мэдисон, Александр Гамильтон или Джон Джей",v:["Томас Джефферсон","Джордж Вашингтон","Бенджамин Франклин"],e:"85 документов федералиста написаны Гамильтоном, Мэдисоном и Джеем под псевдонимом «Публий» в 1787–88 годах в защиту ратификации Конституции."}},
+{n:84,ch:'D',q:"Why were the Federalist Papers important?",c:"They explained and supported ratification of the Constitution",v:["They declared independence from Britain","They established the first federal court","They created the two-party system"],e:"The Federalist Papers argued why the Constitution was superior to the Articles of Confederation and addressed fears about a strong central government. They remain key texts in understanding constitutional law.",ru:{q:"Почему «Документы федералиста» были важны?",c:"Они разъяснили и поддержали ратификацию Конституции",v:["Они провозгласили независимость от Великобритании","Они учредили первый федеральный суд","Они создали двухпартийную систему"],e:"Документы федералиста доказывали превосходство Конституции над Статьями Конфедерации и развеивали опасения по поводу сильного центрального правительства. Они остаются ключевыми текстами конституционного права."}},
+{n:85,ch:'D',q:"Benjamin Franklin is famous for many things. Name one.",c:"Started first free public libraries / inventor / helped write the Declaration / diplomat",v:["Wrote the Constitution","Led the Continental Army","Was the second president"],e:"Franklin was a Founding Father, diplomat, inventor (lightning rod, bifocals), writer (Poor Richard's Almanack), and helped found the first public library (Philadelphia, 1731). He was 81 at the Constitutional Convention.",ru:{q:"Бенджамин Франклин известен многим. Назовите одно из его достижений.",c:"Основал первые бесплатные библиотеки / изобретатель / помогал писать Декларацию / дипломат",v:["Написал Конституцию","Командовал Континентальной армией","Был вторым президентом"],e:"Франклин — отец-основатель, дипломат, изобретатель (громоотвод, бифокальные очки), писатель и помог основать первую общественную библиотеку (Филадельфия, 1731). Ему было 81 год на Конституционном конвенте."}},
+{n:86,ch:'D',q:"George Washington is famous for many things. Name one.",c:"First President / general of the Continental Army / Father of His Country",v:["Wrote the Declaration of Independence","Abolished slavery","Was President during the Civil War"],e:"Washington commanded the Continental Army during the Revolution and presided over the Constitutional Convention. He became the first President in 1789 and voluntarily stepped down after two terms, setting a key precedent.",ru:{q:"Джордж Вашингтон известен многим. Назовите одно из его достижений.",c:"Первый президент / генерал Континентальной армии / Отец нации",v:["Написал Декларацию независимости","Отменил рабство","Был президентом во время Гражданской войны"],e:"Вашингтон командовал Континентальной армией и председательствовал на Конституционном конвенте. В 1789 году стал первым президентом и добровольно покинул пост после двух сроков."}},
+{n:87,ch:'D',q:"Thomas Jefferson is famous for many things. Name one.",c:"Wrote the Declaration / third President / Louisiana Purchase",v:["Commanded the Continental Army","First Secretary of the Treasury","Founded the Republican Party"],e:"Jefferson wrote the Declaration of Independence, served as the third President (1801–09), and doubled the size of the U.S. with the Louisiana Purchase (1803), buying territory from France for $15 million.",ru:{q:"Томас Джефферсон известен многим. Назовите одно из его достижений.",c:"Написал Декларацию / третий президент / Луизианская покупка",v:["Командовал Континентальной армией","Первый государственный секретарь","Основал Республиканскую партию"],e:"Джефферсон написал Декларацию независимости, был третьим президентом (1801–09) и удвоил территорию США через Луизианскую покупку (1803) — куплено у Франции за 15 млн долларов."}},
+{n:88,ch:'D',q:"James Madison is famous for many things. Name one.",c:"Father of the Constitution / fourth President / Federalist Papers co-author",v:["Led the Continental Army","First Chief Justice","Wrote the Declaration of Independence"],e:"Madison drafted much of the Constitution and the Bill of Rights, earning the title 'Father of the Constitution.' He co-wrote the Federalist Papers and served as the fourth President (1809–17).",ru:{q:"Джеймс Мэдисон известен многим. Назовите одно из его достижений.",c:"Отец Конституции / четвёртый президент / соавтор документов федералиста",v:["Командовал Континентальной армией","Первый председатель Верховного суда","Написал Декларацию независимости"],e:"Мэдисон составил большую часть Конституции и Билля о правах, заслужив титул «Отца Конституции». Он был соавтором документов федералиста и четвёртым президентом (1809–17)."}},
+{n:89,ch:'D',q:"Alexander Hamilton is famous for many things. Name one.",c:"First Secretary of the Treasury / Federalist Papers writer / helped found the first bank",v:["Second President","Led the Union Army in the Civil War","Wrote the Declaration of Independence"],e:"Hamilton was the first Treasury Secretary, established the national banking system, co-wrote the Federalist Papers, and founded the New York Post. He was killed in a duel with Vice President Aaron Burr in 1804.",ru:{q:"Александр Гамильтон известен многим. Назовите одно из его достижений.",c:"Первый министр финансов / автор документов федералиста / помог основать первый банк",v:["Второй президент","Командовал армией Союза в Гражданской войне","Написал Декларацию независимости"],e:"Гамильтон — первый министр финансов, основал национальную банковскую систему, был соавтором документов федералиста. В 1804 году погиб на дуэли с вице-президентом Аароном Бёрром."}},
+{n:90,ch:'E',q:"What territory did the United States buy from France in 1803?",c:"The Louisiana Territory",v:["The Florida Territory","The Texas Territory","The Alaska Territory"],e:"The Louisiana Purchase (1803) doubled the size of the U.S., adding 828,000 square miles for $15 million (about 3 cents per acre). President Jefferson negotiated the deal with Napoleon Bonaparte.",ru:{q:"Какую территорию США купили у Франции в 1803 году?",c:"Луизианскую территорию",v:["Флоридскую территорию","Техасскую территорию","Аляску"],e:"Луизианская покупка (1803) удвоила размер США — добавлено 828 000 кв. миль за 15 млн долларов. Президент Джефферсон договорился об этой сделке с Наполеоном Бонапартом."}},
+{n:91,ch:'E',q:"Name one war fought by the United States in the 1800s.",c:"The Civil War / War of 1812 / Mexican-American War / Spanish-American War",v:["World War I","World War II","The Korean War"],e:"The U.S. fought several wars in the 1800s: the War of 1812 (vs. Britain), Mexican-American War (1846–48), the Civil War (1861–65), and the Spanish-American War (1898).",ru:{q:"Назовите одну из войн, которую вели США в XIX веке.",c:"Гражданская война / Война 1812 года / Мексикано-американская война / Испано-американская война",v:["Первая мировая война","Вторая мировая война","Корейская война"],e:"В XIX веке США вели несколько войн: Война 1812 года (с Великобританией), Мексикано-американская война (1846–48), Гражданская война (1861–65) и Испано-американская война (1898)."}},
+{n:92,ch:'E',q:"What war was fought between the North and the South?",c:"The Civil War",v:["The Revolutionary War","The War of 1812","The Spanish-American War"],e:"The Civil War (1861–65) was fought between the Union (North) and the Confederacy (South), primarily over slavery and states' rights. It remains the deadliest war in U.S. history with over 620,000 deaths.",ru:{q:"Какая война велась между Севером и Югом?",c:"Гражданская война",v:["Война за независимость","Война 1812 года","Испано-американская война"],e:"Гражданская война (1861–65) велась между Союзом (Север) и Конфедерацией (Юг), главным образом из-за рабства. Это самая кровопролитная война в истории США — более 620 000 погибших."}},
+{n:93,ch:'E',q:"Name one important event of the Civil War.",c:"The Emancipation Proclamation / Battle of Gettysburg / Fort Sumter",v:["The Declaration of Independence","Washington crossing the Delaware","The Battle of Bunker Hill"],e:"Key Civil War events: Fort Sumter (first shots, 1861), Battle of Gettysburg (turning point, 1863), Emancipation Proclamation (1863, freed enslaved people in Confederate states), and Lee's surrender at Appomattox (1865).",ru:{q:"Назовите одно важное событие Гражданской войны.",c:"Прокламация об освобождении / Битва при Геттисберге / Форт-Самтер",v:["Декларация независимости","Переправа Вашингтона через Делавэр","Битва при Банкер-Хилл"],e:"Ключевые события: Форт-Самтер (первые выстрелы, 1861), Битва при Геттисберге (перелом, 1863), Прокламация об освобождении (1863) и капитуляция Ли при Аппоматтоксе (1865)."}},
+{n:94,ch:'E',q:"Abraham Lincoln is famous for many things. Name one.",c:"Freed the slaves / preserved the Union / led the U.S. during the Civil War",v:["Wrote the Constitution","Purchased the Louisiana Territory","Was the first President"],e:"Lincoln, the 16th President, led the nation through the Civil War, issued the Emancipation Proclamation (1863), and preserved the Union. He was assassinated in April 1865, just days after the Confederate surrender.",ru:{q:"Авраам Линкольн известен многим. Назовите одно из его достижений.",c:"Освободил рабов / сохранил единство страны / руководил США в Гражданской войне",v:["Написал Конституцию","Совершил Луизианскую покупку","Был первым президентом"],e:"Линкольн, 16-й президент, провёл страну через Гражданскую войну, издал Прокламацию об освобождении (1863) и сохранил Союз. Был убит в апреле 1865 года."}},
+{n:95,ch:'E',q:"What did the Emancipation Proclamation do?",c:"Freed the slaves in Confederate states",v:["Ended World War I","Gave women the right to vote","Established the Bill of Rights"],e:"President Lincoln's Emancipation Proclamation (January 1, 1863) declared enslaved people in Confederate states to be free. It transformed the Civil War into a fight to end slavery. The 13th Amendment (1865) permanently abolished slavery.",ru:{q:"Что сделала Прокламация об освобождении?",c:"Освободила рабов в штатах Конфедерации",v:["Завершила Первую мировую войну","Дала женщинам право голоса","Учредила Билль о правах"],e:"Прокламация Линкольна (1 января 1863 года) объявила о свободе порабощённых в Конфедерации. Она превратила Гражданскую войну в борьбу за отмену рабства. 13-я поправка (1865) навсегда упразднила рабство."}},
+{n:96,ch:'E',q:"What U.S. war ended slavery?",c:"The Civil War",v:["The Revolutionary War","The War of 1812","World War II"],e:"The Civil War ended with the Union's victory and the ratification of the 13th Amendment in December 1865, which permanently abolished slavery throughout the United States.",ru:{q:"Какая война в США завершилась отменой рабства?",c:"Гражданская война",v:["Война за независимость","Война 1812 года","Вторая мировая война"],e:"Гражданская война завершилась победой Союза и ратификацией 13-й поправки в декабре 1865 года, которая навсегда упразднила рабство на всей территории США."}},
+{n:97,ch:'E',q:"What amendment says all persons born or naturalized in the U.S. are citizens?",c:"The 14th Amendment",v:["The 13th Amendment","The 15th Amendment","The 19th Amendment"],e:"The 14th Amendment (1868) established birthright citizenship and equal protection under the law. The 2025 USCIS test specifically references its clause 'subject to the jurisdiction thereof' for citizenship by birth.",ru:{q:"Какая поправка гласит, что все лица, рождённые или натурализованные в США, являются гражданами?",c:"14-я поправка",v:["13-я поправка","15-я поправка","19-я поправка"],e:"14-я поправка (1868) установила право гражданства по рождению и равную защиту закона. Тест USCIS 2025 года особо упоминает её положение о гражданстве для тех, кто подпадает под юрисдикцию США."}},
+{n:98,ch:'E',q:"When did all men get the right to vote regardless of race?",c:"After the Civil War / 15th Amendment (1870)",v:["After the Revolutionary War (1789)","After World War I (1920)","After the Civil Rights Act (1965)"],e:"The 15th Amendment (1870) prohibited denying the right to vote based on race, color, or previous condition of servitude. In practice, many states used poll taxes and other tactics to suppress Black voters until the Voting Rights Act of 1965.",ru:{q:"Когда все мужчины получили право голоса независимо от расы?",c:"После Гражданской войны / 15-я поправка (1870)",v:["После Войны за независимость (1789)","После Первой мировой войны (1920)","После Закона о гражданских правах (1965)"],e:"15-я поправка (1870) запретила лишать права голоса по расовому признаку. На практике многие штаты использовали другие методы для подавления голосования чёрных вплоть до Закона об избирательных правах 1965 года."}},
+{n:99,ch:'E',q:"Name one leader of the women's rights movement in the 1800s.",c:"Susan B. Anthony / Elizabeth Cady Stanton / Sojourner Truth",v:["Harriet Beecher Stowe","Clara Barton","Florence Nightingale"],e:"Susan B. Anthony and Elizabeth Cady Stanton organized the women's suffrage movement. Sojourner Truth was a formerly enslaved abolitionist and women's rights advocate. Women finally won the vote with the 19th Amendment in 1920.",ru:{q:"Назовите одного лидера движения за права женщин в XIX веке.",c:"Сьюзен Б. Энтони / Элизабет Кэди Стэнтон / Соджорнер Трут",v:["Гарриет Бичер-Стоу","Клара Бартон","Флоренс Найтингейл"],e:"Энтони и Стэнтон организовали движение за избирательное право женщин. Соджорнер Трут — аболиционистка и правозащитница. Женщины получили право голоса по 19-й поправке в 1920 году."}},
+{n:100,ch:'F',q:"Name one war fought by the United States in the 1900s.",c:"World War I / World War II / Korean War / Vietnam War / Persian Gulf War",v:["The Civil War","The Revolutionary War","The War of 1812"],e:"20th-century U.S. wars: World War I (1917–18), World War II (1941–45), Korean War (1950–53), Vietnam War (1955–75), and the Persian Gulf War (1990–91).",ru:{q:"Назовите одну из войн, которую вели США в XX веке.",c:"Первая мировая / Вторая мировая / Корейская / Вьетнамская / Война в Персидском заливе",v:["Гражданская война","Война за независимость","Война 1812 года"],e:"Войны США в XX веке: Первая мировая (1917–18), Вторая мировая (1941–45), Корейская (1950–53), Вьетнамская (1955–75) и Война в Персидском заливе (1990–91)."}},
+{n:101,ch:'F',q:"Why did the United States enter World War I?",c:"Germany attacked U.S. ships / to support the Allied nations",v:["Japan attacked Pearl Harbor","To stop the spread of communism","Britain asked for direct help"],e:"Germany's unrestricted submarine warfare, including the sinking of the Lusitania (1915) and the Zimmermann Telegram (Germany urging Mexico to attack the U.S.), led Congress to declare war in April 1917.",ru:{q:"Почему США вступили в Первую мировую войну?",c:"Германия атаковала американские суда / чтобы поддержать союзные нации",v:["Япония атаковала Пёрл-Харбор","Чтобы остановить распространение коммунизма","Великобритания напрямую попросила о помощи"],e:"Неограниченная подводная война Германии, включая потопление «Лузитании» (1915) и «Телеграмму Циммермана», привела к объявлению войны Конгрессом в апреле 1917 года."}},
+{n:102,ch:'F',q:"When did women get the right to vote?",c:"1920 / 19th Amendment",v:["1870 / 15th Amendment","1865 / after the Civil War","1960s / Civil Rights Movement"],e:"The 19th Amendment, ratified on August 18, 1920, guaranteed women the right to vote. It came after decades of activism led by Susan B. Anthony, Elizabeth Cady Stanton, and many others.",ru:{q:"Когда женщины получили право голоса?",c:"1920 год / 19-я поправка",v:["1870 год / 15-я поправка","1865 год / после Гражданской войны","1960-е годы / движение за гражданские права"],e:"19-я поправка, ратифицированная 18 августа 1920 года, гарантировала женщинам право голоса. Ей предшествовали десятилетия активизма Энтони, Стэнтон и многих других."}},
+{n:103,ch:'F',q:"What was the Great Depression?",c:"A long period of severe economic recession — high unemployment and poverty",v:["A war fought during the 1930s","A period of high economic growth","A natural disaster in the Midwest"],e:"The Great Depression (1929–1939) was the worst economic downturn in modern history. Unemployment reached 25%. It followed the stock market crash of October 1929 and affected economies worldwide.",ru:{q:"Что такое Великая депрессия?",c:"Длительный период тяжёлого экономического спада — высокая безработица и бедность",v:["Война, которая велась в 1930-х годах","Период высокого экономического роста","Стихийное бедствие на Среднем Западе"],e:"Великая депрессия (1929–1939) — худший экономический кризис в современной истории. Безработица достигла 25%. Она последовала за биржевым крахом в октябре 1929 года и затронула весь мир."}},
+{n:104,ch:'F',q:"When did the Great Depression begin?",c:"1929",v:["1919","1935","1941"],e:"The Great Depression began with the stock market crash on Black Tuesday, October 29, 1929. President Roosevelt's New Deal programs beginning in 1933 helped, but full recovery came only with World War II mobilization.",ru:{q:"Когда началась Великая депрессия?",c:"1929 год",v:["1919 год","1935 год","1941 год"],e:"Великая депрессия началась с биржевого краха в «чёрный вторник», 29 октября 1929 года. Программы «Нового курса» Рузвельта с 1933 года помогли, но полное восстановление пришло лишь с мобилизацией для Второй мировой."}},
+{n:105,ch:'F',q:"Who was President during the Great Depression and World War II?",c:"Franklin D. Roosevelt",v:["Herbert Hoover","Harry Truman","Dwight Eisenhower"],e:"Franklin D. Roosevelt (FDR) served as President from 1933 to 1945 — the longest tenure in U.S. history (4 terms). He launched the New Deal to fight the Depression and led the U.S. through most of WWII.",ru:{q:"Кто был президентом во время Великой депрессии и Второй мировой войны?",c:"Франклин Д. Рузвельт",v:["Герберт Гувер","Гарри Трумэн","Дуайт Эйзенхауэр"],e:"Франклин Д. Рузвельт (ФДР) был президентом с 1933 по 1945 год — дольше, чем кто-либо в истории США (4 срока). Он запустил «Новый курс» и руководил страной в большей части Второй мировой."}},
+{n:106,ch:'F',q:"Why did the United States enter World War II?",c:"Japan attacked Pearl Harbor on December 7, 1941",v:["Germany invaded France","Britain asked for military help","The Soviet Union declared war on the U.S."],e:"Japan's surprise attack on the U.S. naval base at Pearl Harbor, Hawaii, on December 7, 1941 — 'a date which will live in infamy' (FDR) — prompted Congress to declare war the next day.",ru:{q:"Почему США вступили во Вторую мировую войну?",c:"Япония атаковала Пёрл-Харбор 7 декабря 1941 года",v:["Германия вторглась во Францию","Великобритания попросила о военной помощи","Советский Союз объявил войну США"],e:"Внезапное нападение Японии на базу в Пёрл-Харборе 7 декабря 1941 года — «день, который будет жить в позоре» (ФДР) — побудило Конгресс объявить войну на следующий день."}},
+{n:107,ch:'F',q:"Dwight Eisenhower is known for many things. Name one.",c:"WWII general / 34th President / created the Interstate Highway System",v:["Wrote the New Deal legislation","Founded NASA","Led the Union Army in the Civil War"],e:"Eisenhower commanded Allied forces in Europe during WWII (including D-Day, 1944) and served as the 34th President (1953–61). He oversaw the Interstate Highway System and warned of the 'military-industrial complex.'",ru:{q:"Дуайт Эйзенхауэр известен многим. Назовите одно из его достижений.",c:"Генерал Второй мировой / 34-й президент / создал систему межштатных автомагистралей",v:["Написал законодательство «Нового курса»","Основал НАСА","Командовал армией Союза в Гражданской войне"],e:"Эйзенхауэр командовал союзными войсками в Европе (включая высадку в Нормандии, 1944) и был 34-м президентом (1953–61). Он создал систему межштатных автомагистралей и предостерёг от «военно-промышленного комплекса»."}},
+{n:108,ch:'F',q:"Who was the United States' main rival during the Cold War?",c:"The Soviet Union / USSR",v:["China","Germany","Japan"],e:"The Cold War (1947–1991) was a geopolitical struggle between the U.S. and Soviet Union. It featured the nuclear arms race, space race, and proxy wars (Korea, Vietnam) but never direct military conflict between the superpowers.",ru:{q:"Кто был главным соперником США в годы холодной войны?",c:"Советский Союз / СССР",v:["Китай","Германия","Япония"],e:"Холодная война (1947–1991) — геополитическое противостояние между США и СССР. Оно включало гонку вооружений, космическую гонку и войны по доверенности (Корея, Вьетнам), но никогда не переходило в прямой конфликт."}},
+{n:109,ch:'F',q:"During the Cold War, what was the main concern of the United States?",c:"Communism / the spread of communism",v:["Terrorism","Nuclear war with China","Trade imbalance with Europe"],e:"The U.S. feared the spread of Soviet-style communism. The Truman Doctrine (1947) pledged to contain communism globally. This led to involvement in Korea, Vietnam, and dozens of other Cold War conflicts.",ru:{q:"В годы холодной войны, что было главной заботой США?",c:"Коммунизм / распространение коммунизма",v:["Терроризм","Ядерная война с Китаем","Торговый дисбаланс с Европой"],e:"США опасались распространения советского коммунизма. Доктрина Трумэна (1947) обязалась сдерживать коммунизм глобально. Это привело к войнам в Корее, Вьетнаме и других точках мира."}},
+{n:110,ch:'F',q:"Why did the United States enter the Korean War?",c:"To stop the spread of communism",v:["North Korea attacked a U.S. base","To support a treaty with Japan","The UN required U.S. participation by law"],e:"When communist North Korea invaded South Korea in 1950, the U.S. led a UN coalition to defend South Korea. The war ended in 1953 in an armistice — roughly the same border exists today.",ru:{q:"Почему США вступили в Корейскую войну?",c:"Чтобы остановить распространение коммунизма",v:["Северная Корея атаковала американскую базу","Чтобы выполнить договор с Японией","ООН потребовала участия США по закону"],e:"Когда коммунистическая Северная Корея вторглась в Южную Корею в 1950 году, США возглавили коалицию ООН. Война завершилась перемирием в 1953 году — примерно по той же границе, что и сегодня."}},
+{n:111,ch:'F',q:"Why did the United States enter the Vietnam War?",c:"To stop the spread of communism",v:["Vietnam attacked the Philippines","To protect a U.S. military base","France requested American troops"],e:"Following the 'domino theory' — that if one country fell to communism, others would follow — the U.S. sent advisors beginning in the 1950s and combat troops in 1965. U.S. forces withdrew in 1973.",ru:{q:"Почему США вступили во Вьетнамскую войну?",c:"Чтобы остановить распространение коммунизма",v:["Вьетнам атаковал Филиппины","Чтобы защитить американскую военную базу","Франция попросила американские войска"],e:"Следуя «теории домино», США направили советников в 1950-х, а боевые части — в 1965 году. Американские войска вышли из Вьетнама в 1973 году."}},
+{n:112,ch:'F',q:"What did the civil rights movement fight to end?",c:"Racial discrimination",v:["Women's inequality only","Child labor","Religious persecution"],e:"The civil rights movement of the 1950s–60s fought to end racial segregation and discrimination. Key moments include the Montgomery Bus Boycott (1955), March on Washington (1963), and the Civil Rights Act of 1964.",ru:{q:"За что боролось движение за гражданские права?",c:"За ликвидацию расовой дискриминации",v:["Только за равенство женщин","За ликвидацию детского труда","Против религиозных преследований"],e:"Движение за гражданские права 1950–60-х годов боролось за прекращение расовой сегрегации. Ключевые моменты: бойкот автобусов в Монтгомери (1955), марш на Вашингтон (1963), Закон о гражданских правах 1964 года."}},
+{n:113,ch:'F',q:"Martin Luther King Jr. is famous for many things. Name one.",c:"Fought for civil rights and equality for all Americans",v:["Was the first Black president","Wrote the Emancipation Proclamation","Founded the NAACP"],e:"Dr. King led nonviolent protests, delivered the 'I Have a Dream' speech (1963), and won the Nobel Peace Prize (1964). He was assassinated in Memphis on April 4, 1968. His birthday is a national holiday.",ru:{q:"Мартин Лютер Кинг-младший известен многим. Назовите одно из его достижений.",c:"Боролся за гражданские права и равенство всех американцев",v:["Был первым чёрным президентом","Написал Прокламацию об освобождении","Основал NAACP"],e:"Доктор Кинг руководил ненасильственными протестами, произнёс речь «У меня есть мечта» (1963) и получил Нобелевскую премию мира (1964). Убит в Мемфисе 4 апреля 1968 года."}},
+{n:114,ch:'F',q:"Why did the United States enter the Persian Gulf War?",c:"To force Iraqi troops out of Kuwait",v:["To protect Israel","To remove Saddam Hussein from power","Because Kuwait attacked Saudi Arabia"],e:"When Iraq invaded Kuwait in August 1990, the U.S. led a 35-nation coalition. Operation Desert Storm (1991) liberated Kuwait in 100 hours of ground combat. Iraq's Saddam Hussein remained in power until 2003.",ru:{q:"Почему США вступили в войну в Персидском заливе?",c:"Чтобы выдворить иракские войска из Кувейта",v:["Чтобы защитить Израиль","Чтобы отстранить Саддама Хусейна","Потому что Кувейт атаковал Саудовскую Аравию"],e:"Когда Ирак вторгся в Кувейт в 1990 году, США возглавили коалицию из 35 государств. Операция «Буря в пустыне» (1991) освободила Кувейт за 100 часов наземных боёв."}},
+{n:115,ch:'F',q:"What major event happened on September 11, 2001?",c:"Terrorists attacked the United States",v:["A major hurricane hit New York","The stock market crashed","The U.S. declared war on Iraq"],e:"On 9/11, al-Qaeda terrorists hijacked 4 planes: 2 hit the World Trade Center (NYC), 1 hit the Pentagon, and 1 crashed in Pennsylvania. Nearly 3,000 people died. It led to the War on Terror and the Department of Homeland Security.",ru:{q:"Какое крупное событие произошло 11 сентября 2001 года?",c:"Террористы атаковали США",v:["На Нью-Йорк обрушился мощный ураган","Произошёл биржевой крах","США объявили войну Ираку"],e:"11 сентября террористы «Аль-Каиды» захватили 4 самолёта: 2 врезались во Всемирный торговый центр, 1 — в Пентагон, 1 упал в Пенсильвании. Погибли около 3 000 человек."}},
+{n:116,ch:'F',q:"Name one American military conflict after September 11, 2001.",c:"War in Afghanistan / War in Iraq / War on Terror",v:["The Korean War","The Vietnam War","The Persian Gulf War"],e:"Following 9/11, the U.S. invaded Afghanistan (2001) to destroy al-Qaeda and the Taliban. The Iraq War began in 2003. U.S. combat operations in Afghanistan ended in 2021 — the longest war in American history.",ru:{q:"Назовите один американский военный конфликт после 11 сентября 2001 года.",c:"Война в Афганистане / Война в Ираке / Война с терроризмом",v:["Корейская война","Вьетнамская война","Война в Персидском заливе"],e:"После 11 сентября США вторглись в Афганистан (2001), чтобы уничтожить «Аль-Каиду». Война в Ираке началась в 2003 году. Боевые операции в Афганистане завершились в 2021 году — это была самая долгая война в истории США."}},
+{n:117,ch:'F',q:"Name one American Indian tribe in the United States.",c:"Cherokee / Navajo / Sioux / Apache / any federally recognized tribe",v:["Aztec","Inca","Maya"],e:"There are 574 federally recognized American Indian tribes. The largest include the Navajo Nation, Cherokee Nation, and Chippewa. Each has distinct cultures, languages, and sovereignty rights.",ru:{q:"Назовите одно из племён американских индейцев в США.",c:"Чероки / Навахо / Сиу / Апачи / любое федерально признанное племя",v:["Ацтеки","Инки","Майя"],e:"В США существуют 574 федерально признанных племени американских индейцев. Крупнейшие: нация навахо, нация чероки и чиппева. Каждое имеет свои культуру, язык и право на суверенитет."}},
+{n:118,ch:'F',q:"Name one U.S. innovation or American invention.",c:"The light bulb / the airplane / the internet / skyscrapers",v:["The steam engine (British)","The printing press (German)","Penicillin (Scottish)"],e:"American innovations include: the telephone (Bell), light bulb (Edison), airplane (Wright Brothers), assembly line (Ford), internet (ARPA/universities), smart phone, and numerous medical advances.",ru:{q:"Назовите одно американское нововведение или изобретение.",c:"Лампочка / самолёт / интернет / небоскрёбы",v:["Паровой двигатель (британцы)","Печатный станок (немцы)","Пенициллин (шотландцы)"],e:"Американские изобретения: телефон (Белл), лампочка (Эдисон), самолёт (братья Райт), конвейер (Форд), интернет (ARPA/университеты), смартфон и многочисленные медицинские достижения."}},
+{n:119,ch:'G',q:"What is the capital of the United States?",c:"Washington, D.C.",v:["New York City","Philadelphia","Chicago"],e:"Washington, D.C. (District of Columbia) has been the U.S. capital since 1800. It is not part of any state. It was named after George Washington and designed by Pierre Charles L'Enfant.",ru:{q:"Какова столица США?",c:"Вашингтон, округ Колумбия",v:["Нью-Йорк","Филадельфия","Чикаго"],e:"Вашингтон, округ Колумбия, является столицей США с 1800 года. Он не входит в состав ни одного штата. Назван в честь Джорджа Вашингтона и спроектирован Пьером Шарлем Л'Анфаном."}},
+{n:120,ch:'G',q:"Where is the Statue of Liberty?",c:"New York Harbor / Liberty Island",v:["Washington, D.C.","Philadelphia, PA","Boston, MA"],e:"The Statue of Liberty stands on Liberty Island in New York Harbor. A gift from France, it was dedicated in 1886. Lady Liberty has been a symbol of freedom and democracy to millions of arriving immigrants.",ru:{q:"Где находится Статуя Свободы?",c:"В гавани Нью-Йорка / на острове Свободы",v:["В Вашингтоне, округ Колумбия","В Филадельфии","В Бостоне"],e:"Статуя Свободы стоит на острове Свободы в гавани Нью-Йорка. Подарена Францией и открыта в 1886 году. Она стала символом свободы для миллионов иммигрантов."}},
+{n:121,ch:'G',q:"Why does the flag have 13 stripes?",c:"Because there were 13 original colonies",v:["To honor the 13 founding presidents","For luck — 13 is a traditional number","To represent 13 states in the Civil War"],e:"The 13 alternating red and white stripes represent the 13 original colonies that declared independence from Britain in 1776. The design has remained unchanged despite the U.S. growing to 50 states.",ru:{q:"Почему на флаге 13 полос?",c:"Потому что было 13 первоначальных колоний",v:["В честь 13 президентов-основателей","Из-за суеверий — 13 приносит удачу","Чтобы обозначить 13 штатов в Гражданской войне"],e:"Тринадцать чередующихся красных и белых полос символизируют 13 первоначальных колоний, объявивших независимость в 1776 году. Этот элемент не изменился, хотя США выросли до 50 штатов."}},
+{n:122,ch:'G',q:"Why does the flag have 50 stars?",c:"One star for each state — there are 50 states",v:["To honor 50 founding fathers","Because 50 years passed before the first state joined","To represent 50 wars fought in U.S. history"],e:"The 50 stars on the flag represent the 50 states. The last star was added in 1960 when Hawaii became the 50th state. The current design has been unchanged for over 60 years — the longest in U.S. history.",ru:{q:"Почему на флаге 50 звёзд?",c:"По одной звезде на каждый штат — их 50",v:["В честь 50 отцов-основателей","Потому что прошло 50 лет до вступления первого штата","В память о 50 войнах в истории США"],e:"50 звёзд символизируют 50 штатов. Последняя добавлена в 1960 году, когда Гавайи стали 50-м штатом. Нынешний дизайн флага остаётся неизменным более 60 лет."}},
+{n:123,ch:'G',q:"What is the national anthem of the United States?",c:"The Star-Spangled Banner",v:["America the Beautiful","God Bless America","My Country, 'Tis of Thee"],e:"The Star-Spangled Banner was written by Francis Scott Key during the Battle of Fort McHenry (1814). Congress officially designated it as the national anthem in 1931. It has 4 verses, though usually only the first is sung.",ru:{q:"Каков государственный гимн США?",c:"«Звёздно-полосатый флаг»",v:["«Америка прекрасная»","«Боже, благослови Америку»","«Моя страна, это о тебе»"],e:"«Звёздно-полосатый флаг» написан Фрэнсисом Скоттом Ки во время битвы за форт Макгенри (1814). Конгресс официально утвердил его гимном в 1931 году."}},
+{n:124,ch:'G',q:"What was the first national motto of the United States?",c:"E Pluribus Unum (Out of many, one)",v:["In God We Trust","Liberty and Justice for All","United We Stand"],e:"E Pluribus Unum (Latin: 'Out of many, one') has been on the Great Seal of the U.S. since 1782. It refers to the unity of the 13 colonies. 'In God We Trust' became the official motto in 1956.",ru:{q:"Каким был первый национальный девиз США?",c:"E Pluribus Unum («Из многих — одно»)",v:["«На Бога уповаем»","«Свобода и справедливость для всех»","«Объединёнными устоим»"],e:"«E Pluribus Unum» (лат. «Из многих — одно») присутствует на Большой печати США с 1782 года. Символизирует единство 13 колоний. «На Бога уповаем» стал официальным девизом в 1956 году."}},
+{n:125,ch:'H',q:"What is Independence Day?",c:"July 4th — celebrating independence from Britain / America's birthday",v:["The day the Constitution was signed","A holiday honoring the military","The day the first states joined the Union"],e:"Independence Day (July 4) celebrates the adoption of the Declaration of Independence on July 4, 1776. It is marked by fireworks, parades, and patriotic events nationwide. It is considered America's birthday.",ru:{q:"Что такое День независимости?",c:"4 июля — праздник независимости от Великобритании / день рождения Америки",v:["День подписания Конституции","Праздник в честь вооружённых сил","День вступления первых штатов в Союз"],e:"День независимости (4 июля) отмечает принятие Декларации независимости 4 июля 1776 года. В этот день по всей стране проводятся фейерверки, парады и патриотические мероприятия."}},
+{n:126,ch:'H',q:"Name three national U.S. holidays.",c:"Independence Day, Thanksgiving, and Memorial Day",v:["Christmas, Easter, and Groundhog Day","St. Patrick's Day, Valentine's Day, and Halloween","Columbus Day, Flag Day, and Arbor Day"],e:"Federal holidays include New Year's Day, MLK Day, Presidents' Day, Memorial Day, Juneteenth, Independence Day, Labor Day, Columbus Day, Veterans Day, Thanksgiving, and Christmas.",ru:{q:"Назовите три национальных праздника США.",c:"День независимости, День благодарения и День памяти",v:["Рождество, Пасха и День сурка","День св. Патрика, День святого Валентина и Хэллоуин","День Колумба, День флага и Арбор-Дэй"],e:"Федеральные праздники: Новый год, День Мартина Лютера Кинга, День президентов, День памяти, Юнитинг, День независимости, День труда, День Колумба, День ветеранов, День благодарения и Рождество."}},
+{n:127,ch:'H',q:"What is Memorial Day?",c:"A holiday honoring soldiers who died in service to the United States",v:["A holiday celebrating all U.S. veterans","A day to remember the founding fathers","A second Independence Day celebration"],e:"Memorial Day is observed on the last Monday in May. It honors U.S. military personnel who died in service. It began after the Civil War (then called Decoration Day) and became a federal holiday in 1971.",ru:{q:"Что такое День памяти (Memorial Day)?",c:"Праздник в честь солдат, погибших на службе США",v:["Праздник в честь всех ветеранов США","День памяти отцов-основателей","Второй праздник независимости"],e:"День памяти отмечается в последний понедельник мая. Он чтит память военнослужащих США, погибших на службе. Зародился после Гражданской войны и стал федеральным праздником в 1971 году."}},
+{n:128,ch:'H',q:"What is Veterans Day?",c:"A holiday honoring all U.S. military veterans",v:["A holiday only for veterans who died in combat","Independence Day","A day to thank current active-duty military only"],e:"Veterans Day (November 11) honors all who have served in the U.S. military — living and deceased. It originated as Armistice Day, marking the end of WWI on November 11, 1918. Memorial Day honors those who died; Veterans Day honors all who served.",ru:{q:"Что такое День ветеранов (Veterans Day)?",c:"Праздник в честь всех ветеранов вооружённых сил США",v:["Праздник только для ветеранов, погибших в бою","День независимости","День благодарения военнослужащим действующей службы"],e:"День ветеранов (11 ноября) чтит всех, кто служил в армии США. Первоначально назывался «День перемирия» и отмечал окончание Первой мировой войны 11 ноября 1918 года."}},
+];
+
+// ══════════════════════════════════════════
+// LOCALSTORAGE TRACKER
+// ══════════════════════════════════════════
+const LS_KEY = 'uscis_progress';
+
+function loadProgress() {
+  try { return JSON.parse(localStorage.getItem(LS_KEY)) || {answered:{},wrong:{}}; }
+  catch(e) { return {answered:{},wrong:{}}; }
+}
+function saveProgress(p) {
+  try { localStorage.setItem(LS_KEY, JSON.stringify(p)); } catch(e){}
+}
+function recordAnswer(qn, isCorrect) {
+  const p = loadProgress();
+  p.answered[qn] = (p.answered[qn] || 0) + 1;
+  if (!isCorrect) p.wrong[qn] = (p.wrong[qn] || 0) + 1;
+  else if (p.wrong[qn]) { /* keep wrong count but don't inflate */ }
+  saveProgress(p);
+  refreshStatsBar();
+}
+function getMissedNums() {
+  const p = loadProgress();
+  return Object.keys(p.wrong).map(Number);
+}
+function refreshStatsBar() {
+  const p = loadProgress();
+  const total = Object.keys(p.answered).length;
+  const missed = Object.keys(p.wrong).length;
+  const correct = Object.values(p.answered).reduce((a,b)=>a+b,0)
+                - Object.values(p.wrong).reduce((a,b)=>a+b,0);
+  const bar = document.getElementById('stats-bar');
+  if (total > 0) {
+    bar.classList.add('show');
+    document.getElementById('st-total').textContent = total;
+    document.getElementById('st-correct').textContent = Math.max(0,correct);
+    document.getElementById('st-missed').textContent = missed;
+  } else {
+    bar.classList.remove('show');
+  }
+  document.getElementById('missed-badge').textContent = missed;
+  const missedCard = document.getElementById('mode-missed');
+  missedCard.classList.toggle('disabled', missed === 0);
+}
+function resetProgress() {
+  if (!confirm('Reset all study progress?')) return;
+  localStorage.removeItem(LS_KEY);
+  refreshStatsBar();
+}
+
+// ══════════════════════════════════════════
+// AUDIO
+// ══════════════════════════════════════════
+let audioEnabled = false;
+let currentUtterance = null;
+
+document.getElementById('audio-toggle').addEventListener('change', function() {
+  audioEnabled = this.checked;
+  if (!audioEnabled && currentUtterance) { speechSynthesis.cancel(); currentUtterance = null; }
+});
+
+function speak(text, onEnd) {
+  if (!audioEnabled || !window.speechSynthesis) return;
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.rate = 0.88; u.pitch = 1; u.lang = T[lang].audioLang;
+  u.onend = onEnd || null;
+  currentUtterance = u;
+  speechSynthesis.speak(u);
+}
+function stopSpeech() {
+  if (window.speechSynthesis) speechSynthesis.cancel();
+  currentUtterance = null;
+  document.querySelectorAll('.audio-btn.playing').forEach(b => b.classList.remove('playing'));
+}
+
+// ══════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════
+let mode='all', selCh=null, quizQs=[], idx=0, corr=0, wrng=0, answered=false;
+let lastMode='all', lastCh=null;
+let simMode=false;
+let lang='en'; // 'en' or 'ru'
+
+// ══════════════════════════════════════════
+// I18N — UI STRINGS
+// ══════════════════════════════════════════
+const T = {
+  en: {
+    badge:'2025 USCIS · 128 Official Questions',
+    titleWord:'TEST PREP',
+    heroSub:'Master all 128 civics questions. Pass 12 of 20 to become a citizen.',
+    alertTitle:'⚡ 2025 TEST UPDATE',
+    alertBody:'For N-400 filed Oct 20, 2025+: 128 questions, officer asks 20, you need 12 correct to pass.',
+    lblAnswered:'Answered', lblCorrect:'Correct', lblMissed:'Missed', btnReset:'Reset',
+    mcAllTitle:'Full Practice Test', mcAllDesc:'20 random questions — simulates the real interview',
+    mcSimTitle:'Real Interview Sim', mcSimDesc:'Stops at 12 correct or 9 wrong — exactly like USCIS',
+    mcMissedTitle:'My Weak Spots', mcMissedDesc:"Practice only questions you've answered wrong",
+    mcChTitle:'By Chapter', mcChDesc:'Focus on one topic area at a time',
+    audioLabel:'🔊 Read questions aloud (oral practice)', audioHint:'Browser voices',
+    btnStart:'START PRACTICE →',
+    backBtn:'← Menu',
+    readAloud:'Read aloud',
+    whyAnswer:'📖 Why this answer',
+    correct:'✓ Correct!', correctMsg:'Well done — that is the right answer.',
+    incorrect:'✗ Incorrect.', incorrectMsg:'The correct answer is:',
+    nextBtn:'NEXT QUESTION →', resultsBtn:'SEE RESULTS →',
+    simBar:'🎯 Interview Simulation',simNeed:'Need',simCorrect:'correct to PASS · Stop at',simWrong:'wrong to FAIL',
+    pass:'✅ PASS — You answered 12+ correctly. Well done!',
+    fail:'❌ FAIL — You need 12 correct answers. Keep practicing.',
+    tryAgain:'TRY AGAIN', backMenu:'Back to Menu',
+    r90:'EXCELLENT!', s90:'Outstanding — you are ready for the citizenship test.',
+    r75:'WELL DONE!', s75:'Great score. A bit more practice and you will ace it.',
+    r60:'PASS RANGE', s60:'You passed the practice! Keep reviewing to build confidence.',
+    r50:'KEEP GOING', s50:'Good effort. Review the chapters you missed and try again.',
+    r0:'KEEP STUDYING', s0:'Review the material and practice more. You can do it!',
+    resTotal:'Total', resCorrect:'Correct', resWrong:'Wrong',
+    audioLang:'en-US',
+  },
+  ru: {
+    badge:'2025 USCIS · 128 официальных вопросов',
+    titleWord:'ПОДГОТОВКА',
+    heroSub:'Изучите все 128 вопросов по граждановедению. Для гражданства нужно ответить на 12 из 20.',
+    alertTitle:'⚡ ОБНОВЛЕНИЕ 2025',
+    alertBody:'Для N-400 поданных с 20 октября 2025: 128 вопросов, офицер задаёт 20, нужно правильно ответить на 12.',
+    lblAnswered:'Отвечено', lblCorrect:'Верно', lblMissed:'Ошибок', btnReset:'Сбросить',
+    mcAllTitle:'Полный тест', mcAllDesc:'20 случайных вопросов — как на настоящем интервью',
+    mcSimTitle:'Симуляция интервью', mcSimDesc:'Стоп при 12 верных или 9 неверных — как у USCIS',
+    mcMissedTitle:'Мои слабые места', mcMissedDesc:'Только вопросы, на которые вы ошибались',
+    mcChTitle:'По разделам', mcChDesc:'Сосредоточьтесь на одной теме',
+    audioLabel:'🔊 Читать вопросы вслух (устная практика)', audioHint:'Голос браузера',
+    btnStart:'НАЧАТЬ ПРАКТИКУ →',
+    backBtn:'← Меню',
+    readAloud:'Читать вслух',
+    whyAnswer:'📖 Почему этот ответ',
+    correct:'✓ Верно!', correctMsg:'Отлично — это правильный ответ.',
+    incorrect:'✗ Неверно.', incorrectMsg:'Правильный ответ:',
+    nextBtn:'СЛЕДУЮЩИЙ ВОПРОС →', resultsBtn:'РЕЗУЛЬТАТЫ →',
+    simBar:'🎯 Симуляция интервью',simNeed:'Нужно',simCorrect:'верных для СДАЧИ · Стоп при',simWrong:'неверных',
+    pass:'✅ СДАН — Вы ответили на 12+ вопросов верно!',
+    fail:'❌ НЕ СДАН — Нужно 12 правильных ответов. Продолжайте практику.',
+    tryAgain:'ПОПРОБОВАТЬ ЕЩЁ', backMenu:'Вернуться в меню',
+    r90:'ОТЛИЧНО!', s90:'Превосходно — вы готовы к тесту на гражданство.',
+    r75:'ХОРОШО!', s75:'Отличный результат. Ещё немного практики — и всё получится.',
+    r60:'ЗАЧЁТ', s60:'Вы прошли практику! Продолжайте повторять материал.',
+    r50:'НЕ ОСТАНАВЛИВАЙТЕСЬ', s50:'Хорошее усилие. Повторите разделы, где были ошибки.',
+    r0:'ПРОДОЛЖАЙТЕ УЧИТЬСЯ', s0:'Повторите материал и практикуйтесь ещё. У вас всё получится!',
+    resTotal:'Всего', resCorrect:'Верно', resWrong:'Ошибок',
+    audioLang:'ru-RU',
+  }
+};
+
+// Russian chapter names
+const CHAPTERS_RU = [
+  {id:'A',title:'Принципы американского правительства'},
+  {id:'B',title:'Система управления'},
+  {id:'C',title:'Права и обязанности'},
+  {id:'D',title:'Колониальный период и независимость'},
+  {id:'E',title:'XIX век'},
+  {id:'F',title:'XX век и новейшая история'},
+  {id:'G',title:'Символы США'},
+  {id:'H',title:'Праздники США'},
+];
+
+function setLang(l) {
+  lang = l;
+  // sync all lang buttons
+  ['en','ru'].forEach(x => {
+    const hb = document.getElementById('lang-'+x);
+    const qb = document.getElementById('qlang-'+x);
+    if(hb) hb.classList.toggle('active', x===l);
+    if(qb) qb.classList.toggle('active', x===l);
+  });
+  applyLangUI();
+  // rebuild chapter grid in new language
+  buildChapterGrid();
+  // if currently in quiz, re-render current question
+  if(document.getElementById('quiz').classList.contains('active')) {
+    answered = false;
+    renderQ();
+  }
+}
+
+function applyLangUI() {
+  const t = T[lang];
+  const set = (id, val) => { const el=document.getElementById(id); if(el) el.textContent=val; };
+  set('badge-text', t.badge);
+  set('title-word', t.titleWord);
+  set('hero-sub', t.heroSub);
+  set('alert-title', t.alertTitle);
+  set('alert-body', t.alertBody);
+  set('lbl-answered', t.lblAnswered);
+  set('lbl-correct', t.lblCorrect);
+  set('lbl-missed', t.lblMissed);
+  set('btn-reset', t.btnReset);
+  set('mc-all-title', t.mcAllTitle);
+  set('mc-all-desc', t.mcAllDesc);
+  set('mc-sim-title', t.mcSimTitle);
+  set('mc-sim-desc', t.mcSimDesc);
+  set('mc-missed-desc', t.mcMissedDesc);
+  set('mc-ch-title', t.mcChTitle);
+  set('mc-ch-desc', t.mcChDesc);
+  set('audio-label', t.audioLabel);
+  set('audio-hint', t.audioHint);
+  set('btn-start', t.btnStart);
+  set('back-btn', t.backBtn);
+  // missed title keeps badge
+  const mt = document.getElementById('mc-missed-title');
+  if(mt) {
+    mt.innerHTML = t.mcMissedTitle + `<span class="missed-count" id="missed-badge">${getMissedNums().length}</span>`;
+  }
+  // results screen buttons
+  const ra = document.getElementById('res-retry'); if(ra) ra.textContent=t.tryAgain;
+  const rb = document.getElementById('res-back'); if(rb) rb.textContent=t.backMenu;
+  const rl = document.getElementById('res-lbl-total'); if(rl) rl.textContent=t.resTotal;
+  const rc = document.getElementById('res-lbl-correct'); if(rc) rc.textContent=t.resCorrect;
+  const rw = document.getElementById('res-lbl-wrong'); if(rw) rw.textContent=t.resWrong;
+}
+
+function shuffle(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]]}return b}
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active')}
+function chName(id){
+  const src = lang==='ru' ? CHAPTERS_RU : CHAPTERS;
+  const c=src.find(c=>c.id===id); return c?c.title:'';
+}
+function goHome(){stopSpeech();showScreen('home');refreshStatsBar();applyLangUI();}
+
+function buildChapterGrid(){
+  const g=document.getElementById('chapters-grid');g.innerHTML='';
+  const src = lang==='ru' ? CHAPTERS_RU : CHAPTERS;
+  src.forEach(ch=>{
+    const count=QS.filter(q=>q.ch===ch.id).length;
+    const b=document.createElement('button');b.className='ch-btn';b.id='ch-'+ch.id;
+    b.innerHTML=`<span class="ch-id">Ch. ${ch.id} · ${count}Q</span>${ch.title}`;
+    b.onclick=()=>selectChapter(ch.id);g.appendChild(b);
+  });
+}
+function selectMode(m){
+  if(m==='missed' && getMissedNums().length===0) return;
+  mode=m;
+  ['all','sim','missed','chapter'].forEach(id=>{
+    document.getElementById('mode-'+id).classList.toggle('selected',id===m);
+  });
+  document.getElementById('chapter-select').style.display=m==='chapter'?'block':'none';
+  if(m!=='chapter') selCh=null;
+  updateStartBtn();
+}
+function selectChapter(id){
+  selCh=id;
+  document.querySelectorAll('.ch-btn').forEach(b=>b.classList.remove('selected'));
+  const el=document.getElementById('ch-'+id);if(el)el.classList.add('selected');
+  updateStartBtn();
+}
+function updateStartBtn(){
+  document.getElementById('btn-start').disabled=(mode==='chapter'&&!selCh);
+}
+
+// ══════════════════════════════════════════
+// QUIZ FLOW
+// ══════════════════════════════════════════
+function startQuiz(){
+  lastMode=mode; lastCh=selCh; simMode=(mode==='sim');
+  let pool;
+  if(mode==='all'||mode==='sim'){
+    pool=QS;
+  } else if(mode==='missed'){
+    const nums=getMissedNums();
+    pool=QS.filter(q=>nums.includes(q.n));
+  } else {
+    pool=QS.filter(q=>q.ch===selCh);
+  }
+  quizQs=shuffle(pool).slice(0, (mode==='all'||mode==='sim') ? 20 : pool.length);
+  idx=0; corr=0; wrng=0;
+  showScreen('quiz');
+  // sim bar
+  const sb=document.getElementById('sim-bar-wrap');
+  if(simMode){
+    const t=T[lang];
+    sb.innerHTML=`<div class="sim-bar">🎯 ${t.simBar} &nbsp;<span>${t.simNeed}</span> <span class="sim-need" id="sim-need">12</span> <span>${t.simCorrect}</span> <span class="sim-need">9</span> <span>${t.simWrong}</span></div>`;
+  } else { sb.innerHTML=''; }
+  renderQ();
+}
+
+function renderQ(){
+  answered=false;
+  const q=quizQs[idx], total=quizQs.length;
+  const pct=Math.round((idx/total)*100);
+  document.getElementById('prog-label').textContent=`Question ${idx+1} of ${total}`;
+  document.getElementById('prog-pct').textContent=pct+'%';
+  document.getElementById('prog-fill').style.width=pct+'%';
+  document.getElementById('sc-c').textContent=corr;
+  document.getElementById('sc-w').textContent=wrng;
+
+  const t = T[lang];
+  // pick question text in current language
+  const qText   = (lang==='ru' && q.ru) ? q.ru.q : q.q;
+  const qCorrect = (lang==='ru' && q.ru) ? q.ru.c : q.c;
+  const qVariants= (lang==='ru' && q.ru) ? q.ru.v : q.v;
+  const qExpl    = (lang==='ru' && q.ru) ? q.ru.e : q.e;
+  // "peek" = the OTHER language's question + answers
+  const peekQ        = (lang==='ru') ? q.q : (q.ru ? q.ru.q : '');
+  const peekCorrect  = (lang==='ru') ? q.c : (q.ru ? q.ru.c : '');
+  const peekVariants = (lang==='ru') ? q.v : (q.ru ? q.ru.v : []);
+  const peekFlag  = (lang==='ru') ? '🇺🇸' : '🇷🇺';
+  const peekLabel = (lang==='ru') ? 'English' : 'Русский';
+
+  const opts=shuffle([qCorrect,...qVariants]).slice(0,4);
+  const letters=['A','B','C','D'];
+
+  let html=`<div class="q-chapter">${chName(q.ch)}</div>
+    <div class="q-meta">
+      <span class="q-num">Q #${q.n} / 128</span>
+      <button class="audio-btn" id="play-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
+        ${t.readAloud}
+      </button>
+    </div>
+    <div class="q-text">${qText}</div>
+    <div class="translate-row"><button class="translate-btn" id="peek-btn">${peekFlag} ${peekLabel}</button></div>
+    <div class="q-peek" id="q-peek">
+      <div class="peek-q">${peekQ}</div>
+      <div class="peek-answers">${(()=>{const all=[qCorrect,...qVariants];const pa=[peekCorrect,...peekVariants];return opts.map((o,i)=>{const pi=all.indexOf(o);const pt=pi>=0&&pa[pi]?pa[pi]:'';return `<div class="peek-ans"><span class="peek-letter">${letters[i]}</span><span>${pt}</span></div>`;}).join('');})()}</div>
+    </div>
+    <div class="answers">`;
+  opts.forEach((o,i)=>{
+    html+=`<button class="ans-btn" id="ab${i}"><span class="letter">${letters[i]}</span><span>${o}</span></button>`;
+  });
+  html+=`</div><div id="feedback-wrap" class="feedback-wrap"></div>
+    <div class="quiz-nav"><button class="btn-next" id="btn-next" disabled>${idx+1<total? t.nextBtn : t.resultsBtn}</button></div>`;
+
+  document.getElementById('quiz-body').innerHTML=html;
+
+  // Attach answer handlers using translated values
+  opts.forEach((opt,i)=>{
+    document.getElementById('ab'+i).addEventListener('click',function(){
+      handleAnswer(i, opt, qCorrect, qExpl, opts, q.n);
+    });
+  });
+  document.getElementById('btn-next').addEventListener('click', nextQ);
+
+  // Attach audio button
+  const playBtn = document.getElementById('play-btn');
+  const speakText = qText;
+  playBtn.addEventListener('click', function() {
+    if (this.classList.contains('playing')) {
+      stopSpeech(); this.classList.remove('playing'); return;
+    }
+    document.querySelectorAll('.audio-btn.playing').forEach(b => b.classList.remove('playing'));
+    this.classList.add('playing');
+    if (!window.speechSynthesis) {
+      alert('Your browser does not support text-to-speech. Try Chrome or Edge.');
+      this.classList.remove('playing'); return;
+    }
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(speakText);
+    u.rate = 0.88; u.lang = T[lang].audioLang;
+    const btn = this;
+    u.onend = () => btn.classList.remove('playing');
+    u.onerror = () => btn.classList.remove('playing');
+    speechSynthesis.speak(u);
+  });
+
+  // Attach peek/translate button
+  document.getElementById('peek-btn').addEventListener('click', function() {
+    const peek = document.getElementById('q-peek');
+    const isOpen = peek.classList.toggle('show');
+    this.classList.toggle('open', isOpen);
+  });
+
+  // Auto-speak if audio toggle is on
+  if(audioEnabled) speak(qText);
+}
+
+function handleAnswer(ci, chosen, correct, explanation, opts, qNum){
+  if(answered) return;
+  answered=true;
+  const isOk=(chosen===correct);
+  if(isOk) corr++; else wrng++;
+
+  // Track in localStorage
+  recordAnswer(qNum, isOk);
+
+  document.getElementById('sc-c').textContent=corr;
+  document.getElementById('sc-w').textContent=wrng;
+  opts.forEach((_,i)=>{ document.getElementById('ab'+i).disabled=true; });
+  document.getElementById('ab'+ci).classList.add(isOk?'state-correct':'state-wrong');
+  if(!isOk){
+    opts.forEach((opt,i)=>{if(opt===correct) document.getElementById('ab'+i).classList.add('state-reveal');});
+  }
+
+  // Feedback + explanation
+  const t = T[lang];
+  const fw = document.getElementById('feedback-wrap');
+  fw.innerHTML = `
+    <div class="feedback ${isOk?'fb-correct':'fb-wrong'}">
+      <strong>${isOk ? t.correct : t.incorrect}</strong>
+      ${isOk ? t.correctMsg : `${t.incorrectMsg} <em>${correct}</em>`}
+    </div>
+    <div class="explanation">
+      <strong>${t.whyAnswer}</strong>
+      ${explanation}
+    </div>`;
+
+  // Speak feedback (use current lang voice)
+  if(audioEnabled){
+    const fb = isOk ? t.correctMsg + ' ' + explanation : t.incorrectMsg + ' ' + correct + '. ' + explanation;
+    speak(fb);
+  }
+
+  // Update sim bar
+  if(simMode){
+    const need = Math.max(0, 12 - corr);
+    const el = document.getElementById('sim-need');
+    if(el) el.textContent = need;
+  }
+
+  document.getElementById('btn-next').disabled=false;
+
+  // Auto-advance in sim mode if pass/fail threshold reached
+  if(simMode){
+    if(corr>=12 || wrng>=9){
+      setTimeout(()=>{ showResults(); }, 1200);
+      return;
+    }
+  }
+}
+
+function nextQ(){
+  stopSpeech();
+  idx++;
+  if(idx>=quizQs.length) showResults(); else renderQ();
+}
+
+// ══════════════════════════════════════════
+// RESULTS
+// ══════════════════════════════════════════
+function showResults(){
+  stopSpeech();
+  const t=T[lang];
+  const total=quizQs.length, pct=Math.round((corr/total)*100);
+  const circ=301.6, offset=circ-(pct/100)*circ;
+  let title,sub;
+  if(pct>=90){title=t.r90;sub=t.s90}
+  else if(pct>=75){title=t.r75;sub=t.s75}
+  else if(pct>=60){title=t.r60;sub=t.s60}
+  else if(pct>=50){title=t.r50;sub=t.s50}
+  else{title=t.r0;sub=t.s0}
+
+  document.getElementById('res-pct').textContent=pct+'%';
+  document.getElementById('res-title').textContent=title;
+  document.getElementById('res-sub').textContent=sub;
+  document.getElementById('res-total').textContent=total;
+  document.getElementById('res-correct').textContent=corr;
+  document.getElementById('res-wrong').textContent=wrng;
+  document.getElementById('res-lbl-total').textContent=t.resTotal;
+  document.getElementById('res-lbl-correct').textContent=t.resCorrect;
+  document.getElementById('res-lbl-wrong').textContent=t.resWrong;
+  document.getElementById('res-retry').textContent=t.tryAgain;
+  document.getElementById('res-back').textContent=t.backMenu;
+
+  // Sim verdict
+  const vbox = document.getElementById('verdict-box');
+  if(simMode){
+    const pass = corr>=12 && wrng<9;
+    vbox.innerHTML=`<div class="verdict ${pass?'pass':'fail'}">${pass? t.pass : t.fail}</div>`;
+  } else { vbox.innerHTML=''; }
+
+  showScreen('results');
+  setTimeout(()=>{
+    const a=document.getElementById('ring-arc');
+    if(a){a.style.transition='stroke-dashoffset 1s ease';a.setAttribute('stroke-dashoffset',offset);}
+  },120);
+}
+function retryQuiz(){mode=lastMode;selCh=lastCh;startQuiz()}
+
+// ══════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════
+buildChapterGrid();
+refreshStatsBar();
+updateStartBtn();
+selectMode('all');
+applyLangUI();
+</script>
+</body>
+</html>
